@@ -1,4 +1,3 @@
-import json
 import ijson
 import sqlite3
 
