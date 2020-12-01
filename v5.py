@@ -1,5 +1,4 @@
 import json
-from concurrent.futures import ThreadPoolExecutor as core
 import ijson
 import sqlite3
 
