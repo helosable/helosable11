@@ -34,7 +34,7 @@ try:
             if len(arr)==11:
                 arr.insert(0,str(id1))
                 for arr1 in check_arr:
-                    if arr[1:]==check_arr :
+                    if arr[1:]==arr1 :
                         pass
                 cur.execute("""INSERT INTO my_table (id ,
                             time, 
