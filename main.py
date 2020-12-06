@@ -2,20 +2,9 @@ import sqlite3
 import ijson 
 
 
-cnx= sqlite3.connect("migrations/main.db")
+cnx= sqlite3.connect("main.db")
 cur=cnx.cursor()
-cur.execute("""CREATE TABLE my_table (id VARCHAR PRIMARY KEY,
-time VARCHAR, 
-remote_addr VARCHAR, 
-remote_user VARCHAR,  
-body_bytes_sent VARCHAR, 
-request_time VARCHAR, 
-status VARCHAR, 
-request VARCHAR,
-request_method VARCHAR,
-http_referrer VARCHAR,
-http_user_agent VARCHAR, 
-proxy_host VARCHAR )""")
+
 
 arr=[]
 loop=0
@@ -29,8 +18,7 @@ try:
             if my_list[0]=='string':
                 arr.append(event)
                 if len(arr)==11:
-                    arr.insert(0,id1)
-                    cur.execute("""INSERT INTO my_table (id,
+                    cur.execute("""INSERT INTO my_table (
                                 time, 
                                 remote_addr, 
                                 remote_user,  
@@ -41,7 +29,7 @@ try:
                                 request_method,
                                 http_referrer,
                                 http_user_agent, 
-                                proxy_host) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",(arr))
+                                proxy_host) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",(arr))
                     arr=[]
                     loop+=1
                     id1+=1
