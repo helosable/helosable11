@@ -7,16 +7,25 @@ cur=cnx.cursor()
 
 
 arr=[]
-loop=0
-id1=1
+loop1=0
 
-try:
-    with open("access.log","r") as my_file:
-        row = ijson.basic_parse(my_file,multiple_values=True)
-        for line,event in row: 
-            my_list=[line,event]
-            if my_list[0]=='string':
-                arr.append(event)
+def json_still_valid(js):
+    try:
+        parse = list(ijson.basic_parse(js,multiple_values=True))
+    except ijson.common.IncompleteJSONError:
+        return False
+    except ijson.JSONError:
+        return False
+    return parse
+
+with open("access.log","r") as my_file:
+    for loop in my_file:
+        row = json_still_valid(loop)
+        if type(row)!=bool:  
+            for line,event in row:
+                my_list=[line,event]
+                if my_list[0]=='string':
+                    arr.append(event)
                 if len(arr)==11:
                     cur.execute("""INSERT INTO my_table (
                                 time, 
@@ -31,16 +40,15 @@ try:
                                 http_user_agent, 
                                 proxy_host) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",(arr))
                     arr=[]
-                    loop+=1
-                    id1+=1
-                    if loop == 100000:  
-                        loop = 0 
+                    loop1+=1
+                    if loop1 == 100000:  
+                        loop1 = 0 
                         cnx.commit()
-except ijson.common.IncompleteJSONError as e :
+        if type(row)==bool:
+            print(loop)
+            cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
+            cnx.commit()
+            continue
     cnx.commit()
-    my_file.close()   
-    print (e)
-        
+    myfile.close()        
 
-cnx.commit()
-my_file.close()
