@@ -28,17 +28,20 @@ with open("access.log","r") as myfile:
             cnx.commit()
             continue
         
-        time=row[0].get("time")
-        remote_addr=row[0].get("remote_addr")
-        remote_user=row[0].get("remote_user")
-        body_bytes_sent=row[0].get(" body_bytes_sent")
-        request_time=row[0].get("request_time")
-        status=row[0].get("status")
-        request=row[0].get("request")
-        request_method=row[0].get("request_method")
-        http_referrer=row[0].get("http_referrer")
-        http_user_agent=row[0].get("http_user_agent")
-        proxy_host=row[0].get("proxy_host")
+        for i in row:
+            time=i['time']
+            remote_addr=i['remote_addr']
+            remote_user=i['remote_user']
+            body_bytes_sent=i['body_bytes_sent']
+            request_time=i['request_time']
+            status=i['status']
+            request=i['request']
+            request_method=i['request_method']
+            http_referrer=i['http_referrer']
+            http_user_agent=i['http_user_agent']
+            proxy_host=i['proxy_host']
+            
+            
         cur.execute("""INSERT INTO my_table (time, 
         remote_addr, 
         remote_user,  
