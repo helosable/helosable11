@@ -21,7 +21,7 @@ def json_still_valid(js):
 with open("access.log","r") as my_file:
     for loop in my_file:
         row = json_still_valid(loop)
-        if type(row)!=bool:  
+        if type(row)==list:  
             for line,event in row:
                 my_list=[line,event]
                 if my_list[0]=='string':
@@ -44,10 +44,9 @@ with open("access.log","r") as my_file:
                     if loop1 == 100000:  
                         loop1 = 0 
                         cnx.commit()
-        if type(row)==bool:
+        elif row==False:
             print(loop)
             cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
             cnx.commit()
-            continue
     cnx.commit()
-    myfile.close()
+   
