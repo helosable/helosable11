@@ -8,7 +8,6 @@ cur=cnx.cursor()
 
 
 loop1=0
-arr=[]
 
 def json_still_valid(js):
     try:
@@ -63,7 +62,6 @@ with open("access.log","r") as myfile:
         http_user_agent,
         proxy_host
         ))
-        arr=[]
         loop1+=1
         if loop1==100000:
             loop1=0
