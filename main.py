@@ -8,6 +8,7 @@ cur=cnx.cursor()
 
 
 loop1=0
+arr=[]
 
 def json_still_valid(js):
     try:
@@ -27,17 +28,19 @@ with open("access.log","r") as myfile:
             cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
             cnx.commit()
             continue
-        time=row[2][1]
-        remote_addr=row[4][1]
-        remote_user=row[6][1]
-        body_bytes_sent=row[8][1]
-        request_time=row[10][1]
-        status=row[12][1]
-        request=row[14][1]
-        request_method=row[16][1]
-        http_referrer=row[18][1]
-        http_user_agent=row[20][1]
-        proxy_host=row[22][1]
+        for i in row:
+            arr.append(i[1])
+        time=arr[arr.index("time")+1]
+        remote_addr=arr[arr.index("remote_addr")+1]
+        remote_user=arr[arr.index("remote_user")+1]
+        body_bytes_sent=arr[arr.index("body_bytes_sent")+1]
+        request_time=arr[arr.index("request_time")+1]
+        status=arr[arr.index("status")+1]
+        request=arr[arr.index("request")+1]
+        request_method=arr[arr.index("request_method")+1]
+        http_referrer=arr[arr.index("http_referrer")+1]
+        http_user_agent=arr[arr.index("http_user_agent")+1]
+        proxy_host=arr[arr.index("proxy_host")+1]
         cur.execute("""INSERT INTO my_table (time, 
         remote_addr, 
         remote_user,  
@@ -61,6 +64,7 @@ with open("access.log","r") as myfile:
         http_user_agent,
         proxy_host
         ))
+        arr=[]
         loop1+=1
         if loop1==100000:
             loop1=0
