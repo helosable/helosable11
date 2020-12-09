@@ -50,5 +50,4 @@ with open("access.log","r") as my_file:
             cnx.commit()
             continue
     cnx.commit()
-    myfile.close()        
-
+    myfile.close()
