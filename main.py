@@ -12,7 +12,7 @@ arr=[]
 
 def json_still_valid(js):
     try:
-        parse = list(ijson.basic_parse(js,multiple_values=True))
+        row=list(ijson.items(js,"",multiple_values=True))
     except ijson.common.IncompleteJSONError:
         return False
     except ijson.JSONError:
@@ -28,19 +28,18 @@ with open("access.log","r") as myfile:
             cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
             cnx.commit()
             continue
-        for i in row:
-            arr.append(i[1])
-        time=arr[arr.index("time")+1]
-        remote_addr=arr[arr.index("remote_addr")+1]
-        remote_user=arr[arr.index("remote_user")+1]
-        body_bytes_sent=arr[arr.index("body_bytes_sent")+1]
-        request_time=arr[arr.index("request_time")+1]
-        status=arr[arr.index("status")+1]
-        request=arr[arr.index("request")+1]
-        request_method=arr[arr.index("request_method")+1]
-        http_referrer=arr[arr.index("http_referrer")+1]
-        http_user_agent=arr[arr.index("http_user_agent")+1]
-        proxy_host=arr[arr.index("proxy_host")+1]
+        
+        time=row[0].get("time")
+        remote_addr=row[0].get("remote_addr")
+        remote_user=row[0].get("remote_user")
+        body_bytes_sent=row[0].get(" body_bytes_sent")
+        request_time=row[0].get("request_time")
+        status=row[0].get("status")
+        request=row[0].get("request")
+        request_method=row[0].get("request_method")
+        http_referrer=row[0].get("http_referrer")
+        http_user_agent=row[0].get("http_user_agent")
+        proxy_host=row[0].get("proxy_host")
         cur.execute("""INSERT INTO my_table (time, 
         remote_addr, 
         remote_user,  
