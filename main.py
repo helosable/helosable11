@@ -44,10 +44,9 @@ with open("access.log","r") as my_file:
                     if loop1 == 100000:  
                         loop1 = 0 
                         cnx.commit()
-        if row==False:
+        elif row==False:
             print(loop)
             cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
             cnx.commit()
-            continue
     cnx.commit()
    
