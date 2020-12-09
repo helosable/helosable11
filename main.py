@@ -11,8 +11,8 @@ loop1=0
 
 def json_still_valid(js):
     try:
-        parse = list(ijson.basic_parse(js,multiple_values=True))
-    except ijson.common.IncompleteJSONError:
+        parse = json.loads(js)
+    except json.decoder.JSONDecodeError:
         return False
     return parse
 
