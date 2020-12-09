@@ -6,7 +6,7 @@ cnx= sqlite3.connect("main.db")
 cur=cnx.cursor()
 
 
-arr=[]
+
 loop1=0
 
 def json_still_valid(js):
