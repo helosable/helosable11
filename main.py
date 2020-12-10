@@ -1,25 +1,23 @@
 import sqlite3
 import ijson 
-from connect import db
+import parser_data_manager as dm
 
+
+data_manager = dm.Parser_data_manager("main.db")
+def json_still_valid(js):
+        try:
+            parse=ijson.items(js,"",multiple_values=True)
+        except ijson.common.IncompleteJSONError:
+            return False
+        except ijson.JSONError:
+            return False
+        return parse
 
 with open("access.log","r") as myfile:
-    loop1=0
-    cur,cnx=db.connect()
     for line in myfile:
-        row = db.json_still_valid(line)
+        row = json_still_valid(line)
         if row == False:
             print (line)
-            db.false_insert()
-            continue            
-        db.inserting(next(row))
-        loop1+=1
-        if loop1==100000:
-            loop1=0
-            cnx.commit()
-        cnx.commit()
-
-
-
-if __name__ == "__main__":
-    db.inserting()
+            data_manager.false_insert()
+            continue
+        data_manager.inserting(next(row))
