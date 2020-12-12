@@ -21,3 +21,6 @@ with open("access.log","r") as myfile:
             data_manager.false_insert()
             continue
         data_manager.inserting(next(row))
+        
+
+        

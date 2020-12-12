@@ -4,17 +4,18 @@ import ijson
 
 class Parser_data_manager:
     def __init__(self, connection_string):
-        self.cnx = sqlite3.connect(connection_string)
-        self.cur = self.cnx.cursor()   
+        self._cnx = sqlite3.connect(connection_string)
+        self._cur = self._cnx.cursor()
+        self._count = 0   
 
 
     def false_insert(self):
-        self.cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
-        self.cnx.commit()
+        self._cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
+        self._cnx.commit()
 
 
     def inserting(self, obj):
-        self.cur.execute("""INSERT INTO my_table (
+        self._cur.execute("""INSERT INTO my_table (
             time, 
             remote_addr, 
             remote_user,  
@@ -39,5 +40,7 @@ class Parser_data_manager:
                 obj['proxy_host']
             )
         )
-        self.cnx.commit()
+        self._count = (self._count + 1) % 100000
+        if self._count == 0:
+            self._cnx.commit()
         
