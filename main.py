@@ -11,7 +11,7 @@ id=1
 data_manager = dm.Parser_data_manager("main.db")
 def json_still_valid(js):
     try:
-        parse=ijson.items(js,"",multiple_values=True)
+        parse = ijson.items(js,"",multiple_values=True)
     except ijson.common.IncompleteJSONError:
         return False
     except ijson.JSONError:
