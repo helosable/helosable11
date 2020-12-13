@@ -14,6 +14,8 @@ def json_still_valid(js):
         parse=ijson.items(js,"",multiple_values=True)
     except ijson.common.IncompleteJSONError:
         return False
+    except ijson.JSONError:
+        return False
     return parse
 
 with open("access.log","r") as myfile:
