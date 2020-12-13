@@ -1,12 +1,13 @@
 import sqlite3
 import ijson 
+import hashlib
 
 
 class Parser_data_manager:
     def __init__(self, connection_string):
         self._cnx = sqlite3.connect(connection_string)
         self._cur = self._cnx.cursor()
-        self._count = 0   
+        self._count = 0 
 
 
     def false_insert(self):
@@ -14,8 +15,9 @@ class Parser_data_manager:
         self._cnx.commit()
 
 
-    def inserting(self, obj):
+    def inserting(self, obj, id):
         self._cur.execute("""INSERT INTO my_table (
+            id,
             time, 
             remote_addr, 
             remote_user,  
@@ -26,7 +28,9 @@ class Parser_data_manager:
             request_method,
             http_referrer,
             http_user_agent, 
-            proxy_host) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",(
+            proxy_host,
+            hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",(
+                id,
                 obj['time'],
                 obj['remote_addr'],
                 obj['remote_user'],
@@ -37,10 +41,25 @@ class Parser_data_manager:
                 obj['request_method'],
                 obj['http_referrer'],
                 obj['http_user_agent'],
-                obj['proxy_host']
+                obj['proxy_host'],
+                self.hashing(obj)
             )
         )
         self._count = (self._count + 1) % 100000
         if self._count == 0:
             self._cnx.commit()
+
+    def hashing(self,val):
+        self._pre_hashed_value=str(val)
+        self._pre_hashed_value = self._pre_hashed_value.encode('utf-8')
+        self._hashed_value = hashlib.md5(self._pre_hashed_value)
+        return self._hashed_value.hexdigest()
+
+    def compare(self,string,arr):
+        for i in arr:
+            if string == i:
+                return False
+        return True
+
+    
         
