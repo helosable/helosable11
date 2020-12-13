@@ -3,7 +3,6 @@ import ijson
 import parser_data_manager as dm
 import hashlib
 
-compare_arr=[]
 id=1
 
 
