@@ -29,8 +29,7 @@ class Parser_data_manager:
             http_referrer,
             http_user_agent, 
             proxy_host,
-            hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",(
-                id,
+            hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",(
                 obj['time'],
                 obj['remote_addr'],
                 obj['remote_user'],
@@ -45,7 +44,7 @@ class Parser_data_manager:
                 self.hashing(obj)
             )
         )
-        self._count = (self._count + 1) % 100000
+        self._count = (self._count + 1) % 10000
         if self._count == 0:
             self._cnx.commit()
 
@@ -55,11 +54,12 @@ class Parser_data_manager:
         self._hashed_value = hashlib.md5(self._pre_hashed_value)
         return self._hashed_value.hexdigest()
 
-    def compare(self,string,arr):
-        for i in arr:
-            if string == i:
-                return False
-        return True
+
+    def compare(self,hash):
+        tab=self._cur.execute("""SELECT hash FROM my_table WHERE hash=?""",[f'{hash}'])
+        for i in tab:
+            return len(i)
+            
 
     
         
