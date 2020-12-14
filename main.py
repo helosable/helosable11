@@ -24,5 +24,6 @@ with open("access.log","r") as myfile:
         hashed = data_manager.hashing(str_row)
         if data_manager.compare(hashed) == None:
             data_manager.inserting(next_row)
+        print(hashed)
             
         
