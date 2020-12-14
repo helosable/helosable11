@@ -58,8 +58,8 @@ class Parser_data_manager:
         return self._hashed_value.hexdigest()
 
 
-    def compare(self,hash):
-        tab=self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""",[f'{hash}'])
+    def compare(self,hash1):
+        tab=self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""",[hash1])
         for i in tab:
             return len(i)
             
