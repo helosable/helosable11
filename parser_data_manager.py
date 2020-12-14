@@ -1,6 +1,7 @@
 import sqlite3
 import ijson 
 import hashlib
+import collections
 
 
 class Parser_data_manager:
@@ -17,6 +18,7 @@ class Parser_data_manager:
 
     def insert_val(self, obj):
         if self.compare(self.hash_val(obj))==None:
+            obj = collections.OrderedDict(sorted(obj.items()))
             self._cur.execute("""INSERT INTO my_table (
                 time, 
                 remote_addr, 
