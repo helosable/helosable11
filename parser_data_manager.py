@@ -10,12 +10,12 @@ class Parser_data_manager:
         self._count = 0 
 
 
-    def false_insert(self):
+    def false_insert_val(self):
         self._cur.execute("""INSERT INTO my_table (time) VALUES ('не получилось')""")
         self._cnx.commit()
 
 
-    def inserting(self, obj):
+    def insert_val(self, obj):
         self._cur.execute("""INSERT INTO my_table (
             time, 
             remote_addr, 
@@ -40,14 +40,14 @@ class Parser_data_manager:
                 obj['http_referrer'],
                 obj['http_user_agent'],
                 obj['proxy_host'],
-                self.hashing(obj)
+                self.hash_val(obj)
             )
         )
         self._count = (self._count + 1) % 10000
         if self._count == 0:
             self._cnx.commit()
 
-    def hashing(self,val):
+    def hash_val(self,val):
         self._pre_hashed_value=str(val)
         self._pre_hashed_value = self._pre_hashed_value.encode('utf-8')
         self._hashed_value = hashlib.md5(self._pre_hashed_value)
