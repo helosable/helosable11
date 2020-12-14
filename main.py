@@ -22,8 +22,7 @@ with open("access.log","r") as myfile:
 
         str_row = str(next_row)
         hashed = data_manager.hash_val(str_row)
-        if data_manager.compare(hashed) == None:
-            data_manager.insert_val(next_row)
+        data_manager.insert_val(next_row)
 
             
         
