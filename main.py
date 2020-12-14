@@ -20,8 +20,6 @@ with open("access.log","r") as myfile:
             data_manager.false_insert_val()
             continue
 
-        str_row = str(next_row)
-        hashed = data_manager.hash_val(str_row)
         data_manager.insert_val(next_row)
 
             
