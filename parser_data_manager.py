@@ -52,10 +52,7 @@ class Parser_data_manager:
             self._cnx.commit()
 
     def hash_val(self,val):
-        self._pre_hashed_value=str(val)
-        self._pre_hashed_value = self._pre_hashed_value.encode('utf-8')
-        self._hashed_value = hashlib.md5(self._pre_hashed_value)
-        return self._hashed_value.hexdigest()
+        return str(val).encode("utf-8").hashlib.md5().hexdigest()
 
 
     def compare(self,hash1):
