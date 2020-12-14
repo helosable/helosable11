@@ -6,8 +6,7 @@ import parser_data_manager as dm
 
 data_manager = dm.Parser_data_manager("main.db")
 def json_still_valid(js):
-    parse=ijson.items(js,"",multiple_values=True)
-    return parse
+    return ijson.items(js,"",multiple_values=True)
 
 
 with open("access.log","r") as myfile:
