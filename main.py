@@ -17,13 +17,13 @@ with open("access.log","r") as myfile:
             next_row = next(row)
         except ijson.common.IncompleteJSONError:
             print (line)
-            data_manager.false_insert()
+            data_manager.false_insert_val()
             continue
 
         str_row = str(next_row)
-        hashed = data_manager.hashing(str_row)
+        hashed = data_manager.hash_val(str_row)
         if data_manager.compare(hashed) == None:
-            data_manager.inserting(next_row)
-        print(hashed)
+            data_manager.insert_val(next_row)
+
             
         
