@@ -15,9 +15,8 @@ class Parser_data_manager:
         self._cnx.commit()
 
 
-    def inserting(self, obj, id):
+    def inserting(self, obj):
         self._cur.execute("""INSERT INTO my_table (
-            id,
             time, 
             remote_addr, 
             remote_user,  
@@ -29,7 +28,7 @@ class Parser_data_manager:
             http_referrer,
             http_user_agent, 
             proxy_host,
-            hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",(
+            row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",(
                 obj['time'],
                 obj['remote_addr'],
                 obj['remote_user'],
@@ -56,7 +55,7 @@ class Parser_data_manager:
 
 
     def compare(self,hash):
-        tab=self._cur.execute("""SELECT hash FROM my_table WHERE hash=?""",[f'{hash}'])
+        tab=self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""",[f'{hash}'])
         for i in tab:
             return len(i)
             
