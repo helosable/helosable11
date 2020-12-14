@@ -17,7 +17,8 @@ class Parser_data_manager:
 
 
     def insert_val(self, obj):
-        if self.compare(self.hash_val(obj))==None:
+        hashed1=self.hash_val(obj)
+        if self.compare(hashed1)==None:
             obj = collections.OrderedDict(sorted(obj.items()))
             self._cur.execute("""INSERT INTO my_table (
                 time, 
@@ -43,7 +44,7 @@ class Parser_data_manager:
                     obj['http_referrer'],
                     obj['http_user_agent'],
                     obj['proxy_host'],
-                    self.hash_val(obj)
+                    hashed1
             )
         )
         self._count = (self._count + 1) % 10000
