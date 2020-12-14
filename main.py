@@ -2,13 +2,13 @@ import sqlite3
 import ijson 
 import parser_data_manager as dm
 
-id=1
 
 
 data_manager = dm.Parser_data_manager("main.db")
 def json_still_valid(js):
     parse=ijson.items(js,"",multiple_values=True)
     return parse
+
 
 with open("access.log","r") as myfile:
     for line in myfile:
@@ -19,9 +19,10 @@ with open("access.log","r") as myfile:
             print (line)
             data_manager.false_insert()
             continue
+
         str_row = str(next_row)
         hashed = data_manager.hashing(str_row)
-        data_manager.inserting(next_row,id)
-        id+=1
-           
+        if data_manager.compare(hashed) == None:
+            data_manager.inserting(next_row)
+            
         
