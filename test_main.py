@@ -5,7 +5,7 @@ import hashlib
 import ijson
 import sqlite3
 
-dm=parser_data_manager.Parser_data_manager()
+dm=parser_data_manager.Parser_data_manager("test_db.db")
 
 class main(unittest.TestCase):
     def __init__(self):
