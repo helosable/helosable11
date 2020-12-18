@@ -18,7 +18,7 @@ class Parser_data_manager:
 
     def insert_val(self, obj):
         hashed1=self.hash_val(obj)
-        if self.compare(hashed1)==None:
+        if self._compare(hashed1)==None:
             obj = collections.OrderedDict(sorted(obj.items()))
             self._cur.execute("""INSERT INTO my_table (
                 time, 
@@ -55,7 +55,7 @@ class Parser_data_manager:
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
 
 
-    def compare(self,hash1):
+    def _compare(self,hash1):
         tab=self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""",[hash1])
         for i in tab:
             return len(i)
