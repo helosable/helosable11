@@ -15,9 +15,8 @@ class main(unittest.TestCase):
             for line in myfile:
                 row=next(ijson.items(line,"",multiple_values=True))
                 test_hash=hashlib.sha256(str(row).encode("utf-8")).hexdigest()
-                assert(data_manager.insert_val(row))
                 assert test_hash!=data_manager.hash_val(row)
-                assert line == data_manager.insert_val
+                assert row == data_manager.insert_val(row)
 
 test=main()
 print(test.test_hash())
