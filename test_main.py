@@ -6,7 +6,7 @@ import hashlib
 
 hash1="5eb63bbbe01eeed093cb22bb8f5acdc3"
 
-dm=parser_data_manager.Parser_data_manager("main.db")
+dm=parser_data_manager.Parser_data_manager()
 
 
 class main(unittest.TestCase):
