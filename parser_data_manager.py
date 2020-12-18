@@ -51,7 +51,9 @@ class Parser_data_manager:
         if self._count == 0:
             self._cnx.commit()
 
-    def hash_val(self,val):
+            
+    @staticmethod
+    def hash_val(val):
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
 
 
