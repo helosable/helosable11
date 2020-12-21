@@ -28,7 +28,7 @@ class main(unittest.TestCase):
                     proxy_host FROM my_table """)
         row=dm._cur.fetchone()
         lst=[]
-        self.assertTrue(list(row)==list(obj.values()))
+        self.assertTrue(row==tuple(obj.values()))
 
 if __name__ == "__main__":
       unittest.main()
