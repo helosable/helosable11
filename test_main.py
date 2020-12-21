@@ -17,7 +17,18 @@ class main(unittest.TestCase):
         dm.insert_val(obj)
         dm._cur.execute("""SELECT * FROM my_table """)
         row=dm._cur.fetchone()
-        self.assertTrue((row)==obj) 
+        lst=[]
+        lst1=[]
+        loop=0
+        for val in obj.values():
+            lst.append(val)
+        for  val in row:
+            if loop==0 or loop == 12:
+                loop+=1
+                continue
+            lst1.append(val)
+            loop+=1
+        self.assertTrue(lst1==lst)
 
 if __name__ == "__main__":
       unittest.main()
