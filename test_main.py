@@ -31,16 +31,17 @@ class main(unittest.TestCase):
                     http_user_agent,
                     proxy_host FROM my_table """)
         row=dm._cur.fetchone()
-        lst=[]
         self.assertTrue(row==tuple(obj.values()))
 
     def test_double_insert(self):
         obj={"time": "2021-10-27T14:45:42+00:00", "remote_addr": "103.42.20.221", "remote_user": "03039", "body_bytes_sent": "162", "request_time": "0.000", "status": "301", "request": "POST /d4w/api/getNewBookingsLong HTTP/1.1", "request_method": "POST", "http_referrer": "-", "http_user_agent": "SQLAnywhere/16.0.0.2546", "proxy_host": "-" }
         for i in range(2):
             dm.insert_val(obj)
-        dm._cnx.commit()
+        dm._cur.execute("""SELECT * FROM my_table""")
         row=dm._cur.fetchall()
         self.assertTrue(len(row)==1)
+        
+        
         
 
         
