@@ -11,8 +11,7 @@ dm=parser_data_manager.Parser_data_manager("main.db")
 
 class main(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
         dm._cur.execute("""DELETE FROM my_table""")    
     
     def test_hash(self):
