@@ -4,9 +4,15 @@ import ijson
 import hashlib
 import ijson
 import sqlite3
+from yoyo import read_migrations,get_backend
 
 
-dm=parser_data_manager.Parser_data_manager("main.db")
+backend=get_backend("sqlite:///test.db")
+migrations=read_migrations("/migrations")
+dm=parser_data_manager.Parser_data_manager("test.db")
+
+with backend.lock():
+    backend.apply_migrations(backend.to_apply(migrations))
 
 
 class main(unittest.TestCase):
