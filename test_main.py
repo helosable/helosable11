@@ -8,7 +8,7 @@ from yoyo import read_migrations,get_backend
 
 
 backend=get_backend("sqlite:///test.db")
-migrations=read_migrations("/migrations")
+migrations=read_migrations("./migrations")
 dm=parser_data_manager.Parser_data_manager("test.db")
 
 with backend.lock():
