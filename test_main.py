@@ -15,10 +15,11 @@ class main(unittest.TestCase):
         migrations = read_migrations("./migrations")
         with backend.lock():
             backend.apply_migrations(backend.to_apply(migrations))
-        cls.dm = parser_data_manager.Parser_data_manager('test.db')
+        
 
 
     def setUp(self):
+        cls.dm = parser_data_manager.Parser_data_manager('test.db')
         self.dm.cur.execute("""DELETE FROM my_table""")
         self.cnx = sqlite3.connect("test.db")
         self.cur = self.cnx.cursor()
