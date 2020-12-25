@@ -7,18 +7,16 @@ import sqlite3
 from yoyo import read_migrations,get_backend
 
 
-backend=get_backend("sqlite:///test.db")
-migrations=read_migrations("./migrations")
-dm=parser_data_manager.Parser_data_manager("test.db")
-
-with backend.lock():
-    backend.apply_migrations(backend.to_apply(migrations))
-
-
 class main(unittest.TestCase):
+        
 
     def setUp(self):
-        dm._cur.execute("""DELETE FROM my_table""")    
+        self.backend=get_backend("sqlite:///test.db")
+        self.migrations=read_migrations("./migrations")
+        self.dm=parser_data_manager.Parser_data_manager("test.db")
+        dm._cur.execute("""DELETE FROM my_table""") 
+        with self.backend.lock():
+            self.backend.apply_migrations(backend.to_apply(migrations))     
     
     def test_hash(self):
         self.assertTrue ("5eb63bbbe01eeed093cb22bb8f5acdc3"==parser_data_manager.Parser_data_manager.hash_val("hello world"))
