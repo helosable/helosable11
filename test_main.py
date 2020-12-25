@@ -19,7 +19,7 @@ class main(unittest.TestCase):
 
 
     def setUp(self):
-        self.dm._cur.execute("""DELETE FROM my_table""")
+        self.dm.cur.execute("""DELETE FROM my_table""")
         self.cnx = sqlite3.connect("test.db")
         self.cur = self.cnx.cursor()
         self.count = 0  
