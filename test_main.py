@@ -22,7 +22,7 @@ class main(unittest.TestCase):
         self.dm.cur.execute("""DELETE FROM my_table""")
         self.cnx = sqlite3.connect("test.db")
         self.cur = self.cnx.cursor()
-        self.count = 0  
+        
 
     
     def test_hash(self):
