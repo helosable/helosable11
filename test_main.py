@@ -48,7 +48,7 @@ class main(unittest.TestCase):
         for i in range(2):
             self.dm.insert_val(obj)
         self.cur.execute("""SELECT * FROM my_table""")
-        row = self.dm.cur.fetchall()
+        row = self.cur.fetchall()
         self.assertTrue(len(row) == 1)
         
         
