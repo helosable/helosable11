@@ -1,8 +1,6 @@
 import unittest
 import parser_data_manager
-import ijson
 import hashlib
-import ijson
 import sqlite3
 from yoyo import read_migrations,get_backend
 
@@ -19,10 +17,10 @@ class main(unittest.TestCase):
 
 
     def setUp(self):
-        cls.dm = parser_data_manager.Parser_data_manager('test.db')
-        self.dm.cur.execute("""DELETE FROM my_table""")
+        self.dm = parser_data_manager.Parser_data_manager('test.db')
         self.cnx = sqlite3.connect("test.db")
         self.cur = self.cnx.cursor()
+        self.cur.execute("""DELETE FROM my_table""")
         
 
     
