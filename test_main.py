@@ -23,7 +23,7 @@ class main(unittest.TestCase):
     
     def test_hash(self):
         dm = parser_data_manager.Parser_data_manager("test.db")
-        self.assertTrue ("5eb63bbbe01eeed093cb22bb8f5acdc3"==parser_data_manager.Parser_data_manager.hash_val("hello world"))
+        self.assertTrue ("5eb63bbbe01eeed093cb22bb8f5acdc3" == parser_data_manager.Parser_data_manager.hash_val("hello world"))
     def test_insert(self):
         dm = parser_data_manager.Parser_data_manager("test.db") 
         obj = {"time": "2020-10-27T14:45:42+00:00", "remote_addr": "103.42.20.221", "remote_user": "03039", "body_bytes_sent": "162", "request_time": "0.000", "status": "301", "request": "POST /d4w/api/getNewBookingsLong HTTP/1.1", "request_method": "POST", "http_referrer": "-", "http_user_agent": "SQLAnywhere/16.0.0.2546", "proxy_host": "-" }
@@ -49,7 +49,7 @@ class main(unittest.TestCase):
             dm.insert_val(obj)
         dm._cur.execute("""SELECT * FROM my_table""")
         row = dm._cur.fetchall()
-        self.assertTrue(len(row)==1)
+        self.assertTrue(len(row) == 1)
         
         
         
