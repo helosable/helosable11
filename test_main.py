@@ -17,9 +17,10 @@ class main(unittest.TestCase):
 
 
     def setUp(self):
+        
         self.dm = parser_data_manager.Parser_data_manager('test.db')
-        self.cnx = sqlite3.connect("test.db")
-        self.cur = self.cnx.cursor()
+        self.cnx = self.dm._cnx
+        self.cur = self.dm._cur
         self.cur.execute("""DELETE FROM my_table""")
         
 
