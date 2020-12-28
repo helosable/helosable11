@@ -2,6 +2,8 @@ import sqlite3
 import ijson
 import hashlib
 import collections
+import hashlib
+import collections
 
 
 class Parser_data_manager:
