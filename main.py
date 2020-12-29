@@ -1,25 +1,39 @@
-import sqlite3
-import ijson 
-import parser_data_manager as dm
+import ijson
+import parser_data_manager as pdm
+from yoyo import read_migrations, get_backend
 
 
-
-data_manager = dm.Parser_data_manager("main.db")
 def json_still_valid(js):
-    return ijson.items(js,"",multiple_values=True)
+    try:
+        return next(ijson.items(js, "", multiple_values=True))
+    except ijson.common.IncompleteJSONError:
+        return False
 
 
-with open("access.log","r") as myfile:
-    for line in myfile:
-        row = json_still_valid(line)
-        try:
-            next_row = next(row)
-        except ijson.common.IncompleteJSONError:
-            print (line)
-            data_manager.false_insert_val()
-            continue
 
-        data_manager.insert_val(next_row)
+def migrate():
+    backend = get_backend("sqlite:///main.db")
+    migrations = read_migrations("./migrations")
+    with backend.lock():
+        backend.apply_migrations(backend.to_apply(migrations))
 
-            
-        
+
+def main():
+    try:
+        with open("access.log", "r") as myfile:
+            with pdm.Parser_data_manager("main.db") as dm:
+                for line in myfile:
+                    row = json_still_valid(line)
+                    if not row:
+                        print(line)
+                        dm.false_insert_val()
+                    dm.insert_val(row)
+
+    except FileNotFoundError:
+        print("file not found")
+    except Exception as e:
+        print(repr(e))
+
+if __name__ == "__main__":
+    migrate()
+    main()
