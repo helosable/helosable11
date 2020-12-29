@@ -10,7 +10,6 @@ def json_still_valid(js):
         return False
 
 
-
 def migrate():
     backend = get_backend("sqlite:///main.db")
     migrations = read_migrations("./migrations")
