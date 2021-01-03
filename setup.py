@@ -5,3 +5,4 @@ setup(name='test',
       url="http://packages.python.org",
       install_requires=['ijson', 'yoyo-migrations', ],
       test_suite='test_main')
+//
