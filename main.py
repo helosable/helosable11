@@ -1,6 +1,9 @@
 import ijson
-import parser_data_manager as pdm
 from yoyo import read_migrations, get_backend
+import sys
+import os
+sys.path.append(f"{os.getcwd()}/models")
+from models.parser_data_manager import parser_data_manager as pdm
 
 
 def json_still_valid(js):
