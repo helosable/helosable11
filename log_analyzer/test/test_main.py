@@ -1,5 +1,9 @@
+import os
+from pathlib import Path
+import sys
+sys.path.append(f"{(Path(os.getcwd()).parent)}")
 import unittest
-from parser_data_manager import Parser_data_manager as pdm
+from models.parser_data_manager import Parser_data_manager as pdm
 import sqlite3
 from yoyo import read_migrations, get_backend
 

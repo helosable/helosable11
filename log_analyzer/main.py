@@ -1,9 +1,6 @@
 import ijson
 from yoyo import read_migrations, get_backend
-import sys
-import os
-sys.path.append(f"{os.getcwd()}/models")
-from models.parser_data_manager import parser_data_manager as pdm
+from models.parser_data_manager import Parser_data_manager
 
 
 def json_still_valid(js):
@@ -23,7 +20,7 @@ def migrate():
 def main():
     try:
         with open("access.log", "r") as myfile:
-            with pdm.Parser_data_manager("main.db") as dm:
+            with Parser_data_manager("main.db") as dm:
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
