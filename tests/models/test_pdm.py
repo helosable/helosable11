@@ -1,10 +1,10 @@
-import os , sys
+import os, sys
 from pathlib import Path
-sys.path.append(f"{(Path(os.getcwd()))}")
 import unittest
-from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 import sqlite3
 from yoyo import read_migrations, get_backend
+sys.path.append(f"{(Path(os.getcwd()))}")
+from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 
 
 class main(unittest.TestCase):
