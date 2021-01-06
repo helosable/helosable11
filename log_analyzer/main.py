@@ -1,6 +1,6 @@
 import ijson
 from yoyo import read_migrations, get_backend
-from models.parser_data_manager import Parser_data_manager
+from models.parser_data_manager import Parser_data_manager 
 
 
 def json_still_valid(js):
@@ -12,7 +12,7 @@ def json_still_valid(js):
 
 def migrate():
     backend = get_backend("sqlite:///main.db")
-    migrations = read_migrations("./../migrations")
+    migrations = read_migrations("./migrations")
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
 

@@ -11,7 +11,7 @@ class main(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         backend = get_backend("sqlite:///test.db")
-        migrations = read_migrations("./../../migrations")
+        migrations = read_migrations("./migrations")
         with backend.lock():
             backend.apply_migrations(backend.to_apply(migrations))
 
