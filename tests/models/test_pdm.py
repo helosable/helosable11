@@ -1,3 +1,6 @@
+import os , sys
+from pathlib import Path
+sys.path.append(f"{(Path(os.getcwd()))}")
 import unittest
 from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 import sqlite3
