@@ -1,9 +1,5 @@
-import os
-from pathlib import Path
-import sys
-sys.path.append(f"{(Path(os.getcwd()).parent)}")
 import unittest
-from models.parser_data_manager import Parser_data_manager as pdm
+from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 import sqlite3
 from yoyo import read_migrations, get_backend
 
@@ -12,7 +8,7 @@ class main(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         backend = get_backend("sqlite:///test.db")
-        migrations = read_migrations("./migrations")
+        migrations = read_migrations("./../../migrations")
         with backend.lock():
             backend.apply_migrations(backend.to_apply(migrations))
 
