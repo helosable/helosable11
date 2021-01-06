@@ -1,9 +1,6 @@
-import os, sys
-from pathlib import Path
 import unittest
 import sqlite3
 from yoyo import read_migrations, get_backend
-sys.path.append(f"{(Path(os.getcwd()))}")
 from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 
 
