@@ -12,7 +12,7 @@ def json_still_valid(js):
 
 def migrate():
     backend = get_backend("sqlite:///main.db")
-    migrations = read_migrations("./migrations")
+    migrations = read_migrations("./../migrations")
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
 
