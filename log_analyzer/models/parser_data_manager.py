@@ -36,7 +36,7 @@ class Parser_data_manager:
         hashed1 = self.hash_val(obj)
         if self._compare(hashed1) is False:
             obj = collections.OrderedDict(sorted(obj.items()))
-            self._cur.execute("""INSERT IGNORE INTO my_table (
+            self._cur.execute("""INSERT OR IGNORE INTO my_table (
                 time,
                 remote_addr,
                 remote_user,
