@@ -36,7 +36,7 @@ class Parser_data_manager:
         hashed1 = self.hash_val(obj)
         if self._compare(hashed1) is False:
             obj = collections.OrderedDict(sorted(obj.items()))
-            self._cur.execute("""INSERT INTO my_table (
+            self._cur.execute("""INSERT IGNORE INTO my_table (
                 time,
                 remote_addr,
                 remote_user,
@@ -70,6 +70,6 @@ class Parser_data_manager:
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
 
     def _compare(self, hash1):
-        self._cur.execute("""SELECT row_hash FROM my_table WHERE EXISTS (SELECT row_hash FROM my_table WHERE row_hash=?);""", [hash1])
+        self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""", [hash1])
         tab = self._cur.fetchall()
         return len(tab) > 0
