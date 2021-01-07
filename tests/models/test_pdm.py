@@ -9,7 +9,8 @@ class main(unittest.TestCase):
     def setUpClass(cls):
         backend = get_backend("sqlite:///test.db")
         migrations = read_migrations("./migrations")
-        
+        with backend.lock():
+            backend.apply_migrations(backend.to_apply(migrations))
                     
 
     def setUp(self):
