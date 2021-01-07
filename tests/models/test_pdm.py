@@ -9,6 +9,7 @@ class main(unittest.TestCase):
     def setUpClass(cls):
         backend = get_backend("sqlite:///test.db")
         migrations = read_migrations("./migrations")
+        
                     
 
     def setUp(self):
