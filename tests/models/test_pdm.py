@@ -10,7 +10,14 @@ class main(unittest.TestCase):
         backend = get_backend("sqlite:///test.db")
         migrations = read_migrations("./migrations")
         with backend.lock():
-            backend.apply_migrations(backend.to_apply(migrations))
+            try: 
+                backend.apply_migrations(backend.to_apply(migrations))
+            except sqlite3.OperationalError:
+                with sqlite3.connect('test.db') as cnx:
+                    cur=cnx.cursor()
+                    cur.execute("ALTER TABLE my_table ADD row_hash VARCHAR(35)")
+                    cur.execute("CREATE UNIQUE INDEX hash_idx ON my_table (row_hash)")
+                    
 
     def setUp(self):
         with sqlite3.connect('test.db') as cnx:
