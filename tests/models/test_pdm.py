@@ -11,7 +11,6 @@ class main(unittest.TestCase):
         migrations = read_migrations("./migrations")
         with backend.lock():
             backend.apply_migrations(backend.to_apply(migrations))
-                    
 
     def setUp(self):
         with sqlite3.connect('test.db') as cnx:
