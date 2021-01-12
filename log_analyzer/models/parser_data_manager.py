@@ -12,7 +12,6 @@ class Parser_data_manager:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
             self._count = 0
-            self.error_count = 1
         except sqlite3.Error:
             print("Error connecting to database!")
 
@@ -97,7 +96,7 @@ class Parser_data_manager:
                 obj['http_user_agent'],
                 obj['proxy_host'],
                 hashed1))
-        self._count = (self._count + 1) % 1
+        self._count = (self._count + 1) % 100000
         if self._count == 0:
             self._cnx.commit()
 
