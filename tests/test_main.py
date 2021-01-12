@@ -16,8 +16,8 @@ class main_test(unittest.TestCase):
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
-        main.main("acces_mini.log", "test_main.db")
+        main.main("access_mini.log", "test_main.db")
         with sqlite3.connect("test_main.db") as cnx:
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table")
-            self.assertTrue(len(list(notes)) == 0)
+            self.assertTrue(len(list(notes)) == 10)
