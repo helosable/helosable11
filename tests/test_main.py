@@ -1,5 +1,4 @@
 import unittest
-import log_analyzer.models.main as main
 import sqlite3
 from yoyo import read_migrations, get_backend
 
@@ -13,6 +12,10 @@ class main_test(unittest.TestCase):
             backend.apply_migrations(backend.to_apply(migrations))
 
     def test_main(self):
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
+        from log_analyzer import main
         main.main("acces_mini.log", "test_main.db")
         with sqlite3.connect("test_main.db") as cnx:
             cur = cnx.cursor()
