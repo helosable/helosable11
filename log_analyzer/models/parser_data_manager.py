@@ -3,7 +3,6 @@
 
 import sqlite3
 import hashlib
-import collections
 
 
 class Parser_data_manager:
@@ -33,8 +32,10 @@ class Parser_data_manager:
                            VALUES ('не получилось')""")
 
     def insert_val(self, obj):
-        hashed1 = self.hash_val(obj)
-        obj = collections.OrderedDict(sorted(obj.items()))
+
+        hashed_val = self.hash_val(obj)
+
+        obj = dict(obj.items())
         self._cur.execute("""INSERT OR IGNORE INTO my_table (
             time,
             remote_addr,
@@ -47,7 +48,7 @@ class Parser_data_manager:
             http_referrer,
             http_user_agent,
             proxy_host,
-            row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
+            row_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (
             obj['time'],
             obj['remote_addr'],
             obj['remote_user'],
@@ -59,7 +60,9 @@ class Parser_data_manager:
             obj['http_referrer'],
             obj['http_user_agent'],
             obj['proxy_host'],
-            hashed1))
+            hashed_val)
+        )
+
         self._count = (self._count + 1) % 10000
         if self._count == 0:
             self._cnx.commit()
