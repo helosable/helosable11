@@ -61,7 +61,7 @@ class Parser_data_manager:
                 obj['http_user_agent'],
                 obj['proxy_host'],
                 hashed1))
-        self._count = (self._count + 1) % 10000
+        self._count = (self._count + 1) % 100000
         if self._count == 0:
             self._cnx.commit()
 
