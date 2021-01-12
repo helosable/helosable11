@@ -35,4 +35,15 @@ class main_test(unittest.TestCase):
         with sqlite3.connect("tests/resources/test_main.db") as cnx:
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table")
-            self.assertTrue(list(notes)[1][2] == "не получилось")
+            self.assertTrue(list(notes)[1][2] == "error")
+
+    def test_main_double_false_insert(self):
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
+        from log_analyzer import main
+        main.main("tests/resources/access_mini_false.log", "tests/resources/test_main.db")
+        with sqlite3.connect("tests/resources/test_main.db") as cnx:
+            cur = cnx.cursor()
+            notes = cur.execute("SELECT * FROM my_table WHERE time='error'")
+            self.assertTrue(len(list(notes)) == 1)

@@ -28,17 +28,18 @@ class Parser_data_manager:
         self.close()
 
     def false_insert_val(self):
-        obj = {"time": "не получилось",
-               "remote_addr": "не получилось",
-               "remote_user": "не получилось",
-               "body_bytes_sent": "не получилось",
-               "request_time": "не получилось",
-               "status": "не получилось",
-               "request": "не получилось",
-               "request_method": "не получилось",
-               "http_referrer": "не получилось",
-               "http_user_agent": "не получилось",
-               "proxy_host": "не получилось"}
+        obj = {"time": "error",
+               "remote_addr": "error",
+               "remote_user": "error",
+               "body_bytes_sent": "error",
+               "request_time": "error",
+               "status": "error",
+               "request": "error",
+               "request_method": "error",
+               "http_referrer": "error",
+               "http_user_agent": "error",
+               "proxy_host": "error"}
+        hashed1 = self.hash_val(obj)
         with self._cnx as con:
             con.execute("""INSERT INTO my_table (
                     time,
@@ -64,7 +65,7 @@ class Parser_data_manager:
                 obj['http_referrer'],
                 obj['http_user_agent'],
                 obj['proxy_host'],
-                "не получилось"))
+                hashed1))
 
     def insert_val(self, obj):
         hashed1 = self.hash_val(obj)
