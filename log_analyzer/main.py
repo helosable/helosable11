@@ -17,10 +17,10 @@ def migrate():
         backend.apply_migrations(backend.to_apply(migrations))
 
 
-def main():
+def main(file="access.log", db="main.db"):
     try:
-        with open("access.log", "r") as myfile:
-            with Parser_data_manager("main.db") as dm:
+        with open(file, "r") as myfile:
+            with Parser_data_manager(db) as dm:
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
