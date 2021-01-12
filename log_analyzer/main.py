@@ -24,7 +24,7 @@ def main(file="access.log", db="main.db"):
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
-                        dm.false_insert_val()
+                        dm.false_insert_val(line)
                         continue
                     dm.insert_val(row)
 

@@ -27,7 +27,8 @@ class Parser_data_manager:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
-    def false_insert_val(self):
+    def false_insert_val(self, false_obj):
+        hashed1 = self.hash_val(false_obj)
         obj = {"time": "error",
                "remote_addr": "error",
                "remote_user": "error",
@@ -39,7 +40,6 @@ class Parser_data_manager:
                "http_referrer": "error",
                "http_user_agent": "error",
                "proxy_host": "error"}
-        hashed1 = self.hash_val(obj)
         with self._cnx as con:
             con.execute("""INSERT INTO my_table (
                     time,
