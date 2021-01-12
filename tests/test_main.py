@@ -1,5 +1,5 @@
 import unittest
-import log_analyzer.main as main
+import log_analyzer.models.main as main
 import sqlite3
 from yoyo import read_migrations, get_backend
 
