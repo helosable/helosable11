@@ -19,17 +19,19 @@ def migrate():
 
 def main():
     try:
-        with open("access.log", "r") as myfile:
+        with open("access_mini_false.log", "r") as myfile:
             with Parser_data_manager("main.db") as dm:
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
+                        row = {"1":"1"}
                         print(line)
                         dm.false_insert_val()
+                        continue
                     dm.insert_val(row)
 
     except FileNotFoundError:
-        print("file not found")
+        print("file 'access.log' not found")
     except Exception as e:
         print(repr(e))
 

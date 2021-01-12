@@ -28,9 +28,43 @@ class Parser_data_manager:
         self.close()
 
     def false_insert_val(self):
+        obj = {"time": "не получилось",
+               "remote_addr": "не получилось",
+               "remote_user": "не получилось",
+               "body_bytes_sent": "не получилось",
+               "request_time": "не получилось",
+               "status": "не получилось",
+               "request": "не получилось",
+               "request_method": "не получилось",
+               "http_referrer": "не получилось",
+               "http_user_agent": "не получилось",
+               "proxy_host": "не получилось"}
         with self._cnx as con:
-            con.execute("""INSERT INTO my_table (time)
-                           VALUES ('не получилось')""")
+              con.execute("""INSERT INTO my_table (
+                time,
+                remote_addr,
+                remote_user,
+                body_bytes_sent,
+                request_time,
+                status,
+                request,
+                request_method,
+                http_referrer,
+                http_user_agent,
+                proxy_host,
+                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                obj['time'],
+                obj['remote_addr'],
+                obj['remote_user'],
+                obj['body_bytes_sent'],
+                obj['request_time'],
+                obj['status'],
+                obj['request'],
+                obj['request_method'],
+                obj['http_referrer'],
+                obj['http_user_agent'],
+                obj['proxy_host'],
+                "не получилось"))
 
     def insert_val(self, obj):
         hashed1 = self.hash_val(obj)
@@ -61,7 +95,7 @@ class Parser_data_manager:
                 obj['http_user_agent'],
                 obj['proxy_host'],
                 hashed1))
-        self._count = (self._count + 1) % 100000
+        self._count = (self._count + 1) % 1
         if self._count == 0:
             self._cnx.commit()
 
