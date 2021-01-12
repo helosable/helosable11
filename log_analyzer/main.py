@@ -29,7 +29,7 @@ def main(file="access.log", db="main.db"):
                     dm.insert_val(row)
 
     except FileNotFoundError:
-        print("file not found")
+        print("file 'access.log' not found")
     except Exception as e:
         print(repr(e))
 
