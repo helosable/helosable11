@@ -12,6 +12,7 @@ class Parser_data_manager:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
             self._count = 0
+            self.error_count = 1
         except sqlite3.Error:
             print("Error connecting to database!")
 
