@@ -1,6 +1,6 @@
-import ijson
 from yoyo import read_migrations, get_backend
 from models.parser_data_manager import Parser_data_manager
+import ijson
 
 
 def json_still_valid(js):
