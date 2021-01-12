@@ -20,4 +20,4 @@ class main_test(unittest.TestCase):
         with sqlite3.connect("test_main.db") as cnx:
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table")
-            self.assertTrue(len(list(notes)) == 10)
+            self.assertTrue(len(list(notes)) == 0)
