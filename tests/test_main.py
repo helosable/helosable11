@@ -46,4 +46,4 @@ class main_test(unittest.TestCase):
         with sqlite3.connect("tests/resources/test_main.db") as cnx:
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table WHERE time='error'")
-            self.assertTrue(len(list(notes)) == 1)
+            self.assertTrue(len(list(notes)) == 2)
