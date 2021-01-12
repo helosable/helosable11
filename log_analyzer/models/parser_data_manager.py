@@ -40,18 +40,18 @@ class Parser_data_manager:
                "http_user_agent": "не получилось",
                "proxy_host": "не получилось"}
         with self._cnx as con:
-              con.execute("""INSERT INTO my_table (
-                time,
-                remote_addr,
-                remote_user,
-                body_bytes_sent,
-                request_time,
-                status,
-                request,
-                request_method,
-                http_referrer,
-                http_user_agent,
-                proxy_host,
+            con.execute("""INSERT INTO my_table (
+                    time,
+                    remote_addr,
+                    remote_user,
+                    body_bytes_sent,
+                    request_time,
+                    status,
+                    request,
+                    request_method,
+                    http_referrer,
+                    http_user_agent,
+                    proxy_host,
                 row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
                 obj['time'],
                 obj['remote_addr'],

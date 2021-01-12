@@ -17,14 +17,14 @@ def migrate():
         backend.apply_migrations(backend.to_apply(migrations))
 
 
-def main():
+def main(file="access_mini_false.log", db="main.db"):
     try:
-        with open("access_mini_false.log", "r") as myfile:
-            with Parser_data_manager("main.db") as dm:
+        with open(file, "r") as myfile:
+            with Parser_data_manager(db) as dm:
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
-                        row = {"1":"1"}
+                        row = {"1": "1"}
                         print(line)
                         dm.false_insert_val()
                         continue

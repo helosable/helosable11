@@ -35,4 +35,4 @@ class main_test(unittest.TestCase):
         with sqlite3.connect("tests/resources/test_main.db") as cnx:
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table")
-            self.assertTrue(len(list(notes)) == 9)
+            self.assertTrue(list(notes)[1][2] == "не получилось")
