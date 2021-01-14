@@ -12,6 +12,7 @@ class Parser_data_manager:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
             self._count = 0
+            self._error_count = 1
         except sqlite3.Error:
             print("Error connecting to database!")
 
@@ -28,6 +29,7 @@ class Parser_data_manager:
         self.close()
 
     def false_insert_val(self, false_obj):
+        false_obj = str(false_obj) + str(self._error_count)
         hashed1 = self.hash_val(false_obj)
         obj = {"time": "error",
                "remote_addr": "error",
@@ -41,7 +43,7 @@ class Parser_data_manager:
                "http_user_agent": "error",
                "proxy_host": "error"}
         with self._cnx as con:
-            con.execute("""INSERT INTO my_table (
+            con.execute("""INSERT OR IGNORE INTO my_table (
                     time,
                     remote_addr,
                     remote_user,
@@ -66,6 +68,7 @@ class Parser_data_manager:
                 obj['http_user_agent'],
                 obj['proxy_host'],
                 hashed1))
+        self._error_count += 1
 
     def insert_val(self, obj):
         hashed1 = self.hash_val(obj)

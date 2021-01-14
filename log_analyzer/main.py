@@ -18,16 +18,13 @@ def migrate():
 
 
 def main(file="access.log", db="main.db"):
-    error_count = 1
     try:
         with open(file, "r") as myfile:
             with Parser_data_manager(db) as dm:
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
-                        line = line + str(error_count)
                         dm.false_insert_val(line)
-                        error_count += 1
                         continue
                     dm.insert_val(row)
 

@@ -70,5 +70,25 @@ class main(unittest.TestCase):
             row = cur.fetchall()
             self.assertTrue(len(row) == 1)
 
+    def test_double_insert_false(self):
+        obj = {"time": """\2021-10-27T14:45:42+00:00""",
+               "remote_addr": "103.42.20.221",
+               "remote_user": "03039",
+               "body_bytes_sent": "162",
+               "request_time": "0.000",
+               "status": "301",
+               "request": "POST /d4w/api/getNewBookingsLong HTTP/1.1",
+               "request_method": "POST",
+               "http_referrer": "-",
+               "http_user_agent": "SQLAnywhere/16.0.0.2546",
+               "proxy_host": "-"}
+        with pdm('tests/resources/test.db') as dm:
+            for i in range(2):
+                dm.false_insert_val(obj)
+            with sqlite3.connect('tests/resources/test.db') as cnx:
+                cur = cnx.cursor()
+                row = cur.execute("SELECT * FROM my_table")
+                self.assertTrue(len(list(row)) == 2)
+
 if __name__ == "__main__":
     unittest.main()
