@@ -23,15 +23,17 @@ def main(file="access.log", db="main.db"):
         with open(file, "r") as myfile:
             with Parser_data_manager(db) as dm:
                 count = 0
+                cur_count = 0
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
                         dm.false_insert_val(line)
                         continue
                     if count == 100000:
+                        cur_count = cur_count + count
                         count = 0
                         end = time.process_time()
-                        print(f"прошло {int(end)} секунд с начала выполнения программы")
+                        print(f"прошло {int(end)} секунд, было сделано {cur_count} коммитов с начала выполнения программы")
                     dm.insert_val(row)
                     count += 1
                 dm.commit_pdm()
