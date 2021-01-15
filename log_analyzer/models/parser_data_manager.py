@@ -28,6 +28,9 @@ class Parser_data_manager:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
+    def commit_pdm(self):
+        self._cnx.commit()
+
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
         hashed1 = self.hash_val(false_obj)
