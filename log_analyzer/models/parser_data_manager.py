@@ -28,7 +28,7 @@ class Parser_data_manager:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
-    def false_insert_val(self):
+    def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
         hashed1 = self.hash_val(false_obj)
         obj = {"time": "error",
@@ -71,8 +71,8 @@ class Parser_data_manager:
         self._error_count += 1
 
     def insert_val(self, obj):
+        obj = collections.OrderedDict(sorted(obj.items()))
         hashed1 = self.hash_val(obj)
-            obj = collections.OrderedDict(sorted(obj.items()))
         self._cur.execute("""INSERT OR IGNORE INTO my_table (
                 time,
                 remote_addr,
@@ -85,19 +85,19 @@ class Parser_data_manager:
                 http_referrer,
                 http_user_agent,
                 proxy_host,
-                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
-                obj['time'],
-                obj['remote_addr'],
-                obj['remote_user'],
-                obj['body_bytes_sent'],
-                obj['request_time'],
-                obj['status'],
-                obj['request'],
-                obj['request_method'],
-                obj['http_referrer'],
-                obj['http_user_agent'],
-                obj['proxy_host'],
-                hashed1))
+                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", 
+            (obj['time'],
+            obj['remote_addr'],
+            obj['remote_user'],
+            obj['body_bytes_sent'],
+            obj['request_time'],
+            obj['status'],
+            obj['request'],
+            obj['request_method'],
+            obj['http_referrer'],
+            obj['http_user_agent'],
+            obj['proxy_host'],
+            hashed1))
         self._count = (self._count + 1) % 10000
         if self._count == 0:
             self._cnx.commit()

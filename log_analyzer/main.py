@@ -18,10 +18,10 @@ def migrate():
         backend.apply_migrations(backend.to_apply(migrations))
 
 
-def main():
+def main(file_name, db_name):
     try:
-        with open("access.log", "r") as myfile:
-            with Parser_data_manager("main.db") as dm:
+        with open(file_name, "r") as myfile:
+            with Parser_data_manager(db_name) as dm:
                 count = 0
                 for line in myfile:
                     row = json_still_valid(line)
@@ -42,4 +42,4 @@ def main():
 
 if __name__ == "__main__":
     migrate()
-    main()
+    main("access.log", "main.db")
