@@ -4,17 +4,15 @@
 import sqlite3
 import hashlib
 import collections
-import numpy 
 
 
 class Parser_data_manager:
-    def __init__(self, connection_string, from_where):
+    def __init__(self, connection_string):
         try:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
             self._count = 0
             self._error_count = 1
-            self.from_where = from_where
         except sqlite3.Error:
             print("Error connecting to database!")
 
@@ -30,9 +28,6 @@ class Parser_data_manager:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
-    def commit_pdm(self):
-        self._cnx.commit()
-
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
         hashed1 = self.hash_val(false_obj)
@@ -46,8 +41,7 @@ class Parser_data_manager:
                "request_method": "error",
                "http_referrer": "error",
                "http_user_agent": "error",
-               "proxy_host": "error",
-               "from_where": "error"}
+               "proxy_host": "error"}
         with self._cnx as con:
             con.execute("""INSERT OR IGNORE INTO my_table (
                     time,
@@ -61,8 +55,7 @@ class Parser_data_manager:
                     http_referrer,
                     http_user_agent,
                     proxy_host,
-                    row_hash,
-                from_where) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
                 obj['time'],
                 obj['remote_addr'],
                 obj['remote_user'],
@@ -74,8 +67,7 @@ class Parser_data_manager:
                 obj['http_referrer'],
                 obj['http_user_agent'],
                 obj['proxy_host'],
-                hashed1,
-                obj[from_where]))
+                hashed1))
         self._error_count += 1
 
     def insert_val(self, obj):
@@ -94,8 +86,7 @@ class Parser_data_manager:
                 http_referrer,
                 http_user_agent,
                 proxy_host,
-                row_hash,
-                from_where) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
                 obj['time'],
                 obj['remote_addr'],
                 obj['remote_user'],
@@ -107,8 +98,7 @@ class Parser_data_manager:
                 obj['http_referrer'],
                 obj['http_user_agent'],
                 obj['proxy_host'],
-                hashed1,
-                self.from_where))
+                hashed1))
         self._count = (self._count + 1) % 100000
         if self._count == 0:
             self._cnx.commit()
@@ -121,9 +111,3 @@ class Parser_data_manager:
         self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""", [hash1])
         tab = self._cur.fetchall()
         return len(tab) > 0
-
-    @staticmethod
-    def report(self, percent):
-        mass = self._cur.execute('SELECT * FROM my_table')
-        rep = numpy.percentile(mass, percent)
-        return rep
