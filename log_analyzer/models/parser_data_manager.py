@@ -12,6 +12,7 @@ class Parser_data_manager:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
             self._count = 0
+            self._error_count = 1
         except sqlite3.Error:
             print("Error connecting to database!")
 
@@ -28,38 +29,75 @@ class Parser_data_manager:
         self.close()
 
     def false_insert_val(self):
+        false_obj = str(false_obj) + str(self._error_count)
+        hashed1 = self.hash_val(false_obj)
+        obj = {"time": "error",
+               "remote_addr": "error",
+               "remote_user": "error",
+               "body_bytes_sent": "error",
+               "request_time": "error",
+               "status": "error",
+               "request": "error",
+               "request_method": "error",
+               "http_referrer": "error",
+               "http_user_agent": "error",
+               "proxy_host": "error"}
         with self._cnx as con:
-            con.execute("""INSERT INTO my_table (time)
-                           VALUES ('не получилось')""")
+            con.execute("""INSERT OR IGNORE INTO my_table (
+                    time,
+                    remote_addr,
+                    remote_user,
+                    body_bytes_sent,
+                    request_time,
+                    status,
+                    request,
+                    request_method,
+                    http_referrer,
+                    http_user_agent,
+                    proxy_host,
+                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                obj['time'],
+                obj['remote_addr'],
+                obj['remote_user'],
+                obj['body_bytes_sent'],
+                obj['request_time'],
+                obj['status'],
+                obj['request'],
+                obj['request_method'],
+                obj['http_referrer'],
+                obj['http_user_agent'],
+                obj['proxy_host'],
+                hashed1))
+        self._error_count += 1
 
     def insert_val(self, obj):
         hashed1 = self.hash_val(obj)
-        obj = collections.OrderedDict(sorted(obj.items()))
+            obj = collections.OrderedDict(sorted(obj.items()))
         self._cur.execute("""INSERT OR IGNORE INTO my_table (
-            time,
-            remote_addr,
-            remote_user,
-            body_bytes_sent,
-            request_time,
-            status,
-            request,
-            request_method,
-            http_referrer,
-            http_user_agent,
-            proxy_host,
-            row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
-            obj['time'],
-            obj['remote_addr'],
-            obj['remote_user'],
-            obj['body_bytes_sent'],
-            obj['request_time'],
-            obj['status'],
-            obj['request'],
-            obj['request_method'],
-            obj['http_referrer'],
-            obj['http_user_agent'],
-            obj['proxy_host'],
-            hashed1))
+                time,
+                remote_addr,
+                remote_user,
+                body_bytes_sent,
+                request_time,
+                status,
+                request,
+                request_method,
+                http_referrer,
+                http_user_agent,
+                proxy_host,
+                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                obj['time'],
+                obj['remote_addr'],
+                obj['remote_user'],
+                obj['body_bytes_sent'],
+                obj['request_time'],
+                obj['status'],
+                obj['request'],
+                obj['request_method'],
+                obj['http_referrer'],
+                obj['http_user_agent'],
+                obj['proxy_host'],
+                hashed1))
         self._count = (self._count + 1) % 10000
         if self._count == 0:
             self._cnx.commit()
