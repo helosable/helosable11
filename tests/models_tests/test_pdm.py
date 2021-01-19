@@ -31,7 +31,7 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db') as dm:
+        with pdm('tests/resources/test.db', 'tests/resources/access_mini_false.log') as dm:
             dm.insert_val(obj)
         with sqlite3.connect('tests/resources/test.db') as cnx:
             cur = cnx.cursor()
@@ -61,7 +61,7 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db') as dm:
+        with pdm('tests/resources/test.db', 'tests/resources/access_mini_false.log') as dm:
             for i in range(2):
                 dm.insert_val(obj)
         with sqlite3.connect('tests/resources/test.db') as cnx:
@@ -82,7 +82,7 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db') as dm:
+        with pdm('tests/resources/test.db', 'tests/resources/access_mini_false.log') as dm:
             for i in range(2):
                 dm.false_insert_val(obj)
             with sqlite3.connect('tests/resources/test.db') as cnx:
