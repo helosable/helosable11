@@ -114,6 +114,6 @@ class Parser_data_manager:
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
 
     def report(self, percent):
-        mass = self._cur.execute('SELECT * FROM my_table')
+        mass = self._cur.execute('SELECT request_time FROM my_table')
         rep = int(numpy.percentile(mass, percent))
         return rep

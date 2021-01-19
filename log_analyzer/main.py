@@ -38,12 +38,17 @@ def main(db_name, file_name):
     except Exception as e:
         print(repr(e))
 
-if __name__ == "__main__":
-    migrate()
-    main("access.log", "main.db")
+
+def report():
     with Parser_data_manager("access.log", "main.db") as dm:
         print(f"прошло {int(end)} секунд с начала выполнения программы")
         print(f'50 перцентилей {dm.report(50)}')
         print(f'75 перцентилей {dm.report(75)}')
         print(f'95 перцентилей {dm.report(95)}')
         print(f'99 перцентилей {dm.report(99)}')
+
+
+if __name__ == "__main__":
+    migrate()
+    main("access.log", "main.db")
+    report()
