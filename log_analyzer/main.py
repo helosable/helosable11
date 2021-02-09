@@ -2,7 +2,10 @@ import ijson
 from yoyo import read_migrations, get_backend
 from models.parser_data_manager import Parser_data_manager
 import time
+import sys
 
+first_time = sys.argv[1]
+second_time = sys.argv[2]
 
 def json_still_valid(js):
     try:
@@ -41,11 +44,16 @@ def main(db_name, file_name):
 
 def report():
     with Parser_data_manager("access.log", "main.db") as dm:
-        print(f"прошло {int(end)} секунд с начала выполнения программы")
-        print(f'50 перцентилей {dm.report(50)}')
-        print(f'75 перцентилей {dm.report(75)}')
-        print(f'95 перцентилей {dm.report(95)}')
-        print(f'99 перцентилей {dm.report(99)}')
+        func_list = dm.report_func(first_time, second_time)
+        unique_list = []
+        for word in func_list:
+            if word is not unique_list:
+                unique_list.append(word)
+        for i in unique_list:
+            print(f'функция {i} 50 перцентилей {dm.report(50, first_time, second_time)},')
+            print(f'функция {i} 75 перцентилей {dm.report(75, first_time, second_time)},')
+            print(f'функция {i} 95 перцентилей {dm.report(95, first_time, second_time)}')
+            print(f'функция {i} 99 перцентилей {dm.report(99, first_time, second_time)}')
 
 
 if __name__ == "__main__":
