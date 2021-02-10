@@ -4,8 +4,9 @@ from models.parser_data_manager import Parser_data_manager
 import time
 import sys
 
-first_time = sys.argv[1]
-second_time = sys.argv[2]
+first_time = sys.argv[1:]
+second_time = sys.argv[2:]
+
 
 def json_still_valid(js):
     try:

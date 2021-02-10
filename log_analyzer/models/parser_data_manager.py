@@ -113,15 +113,15 @@ class Parser_data_manager:
     def hash_val(val):
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
 
-    def report(self, percent, first_time, second_time):
-        time_first = f"2020-10-27T14:{first_time}+00:00"
-        time_second = f"2020-10-27T14:{second_time}+00:00"
-        mass = self._cur.execute(f'SELECT request_time FROM my_table WHERE time BETWEEN {time_first} AND {time_second}')
+    def report(self, percent, first_time=0, second_time=0):
+        time_first = f"{first_time}"
+        time_second = f"{second_time}"
+        mass = self._cur.execute(f'SELECT request_time AS request_time FROM my_table WHERE time BETWEEN {time_first} AND {time_second} GROUP BY request_time')
         rep = int(numpy.percentile(mass, percent))
         return rep
 
-    def report_func(self, first_time, second_time):
-        time_first = f"2020-10-27T14:{first_time}+00:00"
-        time_second = f"2020-10-27T14:{second_time}+00:00"
-        func_name = self._cur.execute(f'SELECT request FROM my_table WHERE time BETWEEN {time_first} AND {time_second}')
+    def report_func(self, first_time=0, second_time=0):
+        time_first = f"{first_time}"
+        time_second = f"{second_time}"
+        func_name = self._cur.execute(f'SELECT request AS request FROM my_table WHERE time BETWEEN {time_first} AND {time_second} GROUP BY request')
         return list(func_name)
