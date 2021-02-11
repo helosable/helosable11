@@ -15,9 +15,9 @@ steps = [
     http_referrer VARCHAR,
     http_user_agent VARCHAR,
     proxy_host VARCHAR,
+    row_hash VARCHAR(35),
+    file_name VARCHAR,
     PRIMARY KEY(id))"""),
-    step("ALTER TABLE new_table ADD row_hash VARCHAR(35)"),
-    step("ALTER TABLE new_table ADD file_name VARCHAR(35)"),
     step("INSERT INTO new_table SELECT * FROM my_table"),
     step("DROP TABLE my_table"),
     step("ALTER TABLE new_table RENAME TO my_table")

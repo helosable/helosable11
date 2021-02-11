@@ -68,7 +68,7 @@ class main(unittest.TestCase):
             cur = cnx.cursor()
             cur.execute("""SELECT * FROM my_table""")
             row = cur.fetchall()
-            self.assertTrue(len(row) == 2)
+            self.assertTrue(len(row) == 1)
 
     def test_double_insert_false(self):
         obj = {"time": """\2021-10-27T14:45:42+00:00""",

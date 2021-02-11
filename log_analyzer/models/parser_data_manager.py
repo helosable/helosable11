@@ -78,33 +78,34 @@ class Parser_data_manager:
     def insert_val(self, obj):
         obj = collections.OrderedDict(sorted(obj.items()))
         hashed1 = self.hash_val(obj)
-        self._cur.execute("""INSERT OR IGNORE INTO my_table (
-            time,
-            remote_addr,
-            remote_user,
-            body_bytes_sent,
-            request_time,
-            status,
-            request,
-            request_method,
-            http_referrer,
-            http_user_agent,
-            proxy_host,
-            row_hash,
-            file_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
-            obj['time'],
-            obj['remote_addr'],
-            obj['remote_user'],
-            obj['body_bytes_sent'],
-            obj['request_time'],
-            obj['status'],
-            obj['request'],
-            obj['request_method'],
-            obj['http_referrer'],
-            obj['http_user_agent'],
-            obj['proxy_host'],
-            hashed1,
-            self.file_name))
+        if self._compare(hashed1) is False:
+            self._cur.execute("""INSERT OR IGNORE INTO my_table (
+                time,
+                remote_addr,
+                remote_user,
+                body_bytes_sent,
+                request_time,
+                status,
+                request,
+                request_method,
+                http_referrer,
+                http_user_agent,
+                proxy_host,
+                row_hash,
+                file_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                obj['time'],
+                obj['remote_addr'],
+                obj['remote_user'],
+                obj['body_bytes_sent'],
+                obj['request_time'],
+                obj['status'],
+                obj['request'],
+                obj['request_method'],
+                obj['http_referrer'],
+                obj['http_user_agent'],
+                obj['proxy_host'],
+                hashed1,
+                self.file_name))
         self._count = (self._count + 1) % 100000
         if self._count == 0:
             self._cnx.commit()
@@ -112,6 +113,11 @@ class Parser_data_manager:
     @staticmethod
     def hash_val(val):
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
+
+    def _compare(self, hash1):
+        self._cur.execute("""SELECT row_hash FROM my_table WHERE row_hash=?""", [hash1])
+        tab = self._cur.fetchall()
+        return len(tab) > 0
 
     def report(self, percent, first_time=0, second_time=0):
         time_first = f"{first_time}"
