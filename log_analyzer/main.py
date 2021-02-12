@@ -4,8 +4,8 @@ from models.parser_data_manager import Parser_data_manager
 import time
 import sys
 
-first_time = sys.argv[1:]
-second_time = sys.argv[2:]
+first_time = sys.argv[1]
+second_time = sys.argv[2]
 
 
 def json_still_valid(js):
@@ -27,14 +27,14 @@ end = time.process_time()
 def main(db_name, file_name):
     try:
         with open(file_name, "r") as myfile:
-            with Parser_data_manager(db_name, file_name) as dm:
+            with Parser_data_manager(db_name) as dm:
                 count = 0
                 for line in myfile:
                     row = json_still_valid(line)
                     if not row:
                         dm.false_insert_val(line)
                         continue
-                    dm.insert_val(row)
+                    dm.insert_val(row, file_name)
                     count += 1
 
     except FileNotFoundError:
@@ -59,5 +59,4 @@ def report():
 
 if __name__ == "__main__":
     migrate()
-    main("access.log", "main.db")
-    report()
+    main("main.db", 'access.log')

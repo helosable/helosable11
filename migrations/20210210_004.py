@@ -15,9 +15,10 @@ steps = [
     http_referrer VARCHAR,
     http_user_agent VARCHAR,
     proxy_host VARCHAR,
-    row_hash VARCHAR(35),
     file_name VARCHAR,
+    row_hash VARCHAR(35),
     PRIMARY KEY(id))"""),
+    step("CREATE UNIQUE INDEX hash_unique_index_1 ON new_table(row_hash)"),
     step("INSERT INTO new_table SELECT * FROM my_table"),
     step("DROP TABLE my_table"),
     step("ALTER TABLE new_table RENAME TO my_table")

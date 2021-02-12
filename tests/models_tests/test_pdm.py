@@ -31,8 +31,8 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db', 'tests/resources/access_mini_false.log') as dm:
-            dm.insert_val(obj)
+        with pdm('tests/resources/test.db') as dm:
+            dm.insert_val(obj, 'access_mini_false.log')
         with sqlite3.connect('tests/resources/test.db') as cnx:
             cur = cnx.cursor()
             cur.execute("""SELECT time,
@@ -61,9 +61,9 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db', 'tests/resources/access_mini_false.log') as dm:
+        with pdm('tests/resources/test.db') as dm:
             for i in range(2):
-                dm.insert_val(obj)
+                dm.insert_val(obj, 'access_mini_false.log')
         with sqlite3.connect('tests/resources/test.db') as cnx:
             cur = cnx.cursor()
             cur.execute("""SELECT * FROM my_table""")
@@ -82,14 +82,14 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db', 'tests/resources/access_mini_false.log') as dm:
+        with pdm('tests/resources/test.db') as dm:
             for i in range(2):
                 dm.false_insert_val(obj)
             with sqlite3.connect('tests/resources/test.db') as cnx:
                 cur = cnx.cursor()
                 row = cur.execute("SELECT * FROM my_table")
                 self.assertTrue(len(list(row)) == 2)
-
+            
 
 if __name__ == "__main__":
     unittest.main()
