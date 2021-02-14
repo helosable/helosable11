@@ -4,7 +4,6 @@
 import sqlite3
 import hashlib
 import collections
-import numpy
 
 
 class Parser_data_manager:
@@ -113,23 +112,3 @@ class Parser_data_manager:
     def hash_val(val):
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
 
-    def report(self, percent, first_time=0, second_time=0):
-        time_first = f"{first_time}"
-        time_second = f"{second_time}"
-        per_dict = {}
-        for func in self.report_func(percent, first_time=0, second_time=0):
-            mass = self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}" ')
-            rep = int(numpy.percentile(list(mass), percent))
-            per_dict[f'{str(func)}'] = rep
-        return per_dict
-
-    def report_func(self, first_time=0, second_time=0):
-        time_first = f"{first_time}"
-        time_second = f"{second_time}"
-        func_name = self._cur.execute(f'SELECT request FROM my_table WHERE time BETWEEN {time_first} AND {time_second}')
-        unique_list = []
-        for word in list(func_name):
-            if word is not unique_list:
-                unique_list.append(word)
-        func_name = []
-        return unique_list

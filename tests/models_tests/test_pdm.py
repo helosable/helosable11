@@ -89,6 +89,16 @@ class main(unittest.TestCase):
                 cur = cnx.cursor()
                 row = cur.execute("SELECT * FROM my_table")
                 self.assertTrue(len(list(row)) == 2)
+
+    # def test_percentile(self):
+    #     import sys
+    #     import os
+    #     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
+    #     from log_analyzer import main
+    #     main.main('tests/resources/test_main.db', 'tests/resources/access_mini_false.log')
+    #     with ('tests/resources/test.db') as dm:
+    #         report = dm.report()
+    #         self.assertTrue()
             
 
 if __name__ == "__main__":

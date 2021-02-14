@@ -3,9 +3,11 @@ from yoyo import read_migrations, get_backend
 from models.parser_data_manager import Parser_data_manager
 import time
 import sys
+import sqlite3
+import numpy
 
-first_time = sys.argv[1]
-second_time = sys.argv[2]
+first_time = sys.argv[1:]
+second_time = sys.argv[2:]
 
 
 def json_still_valid(js):
@@ -42,21 +44,25 @@ def main(db_name, file_name):
     except Exception as e:
         print(repr(e))
 
-
-def report():
-    with Parser_data_manager("access.log", "main.db") as dm:
-        func_list = dm.report_func(first_time, second_time)
-        unique_list = []
-        for word in func_list:
-            if word is not unique_list:
-                unique_list.append(word)
-        for i in unique_list:
-            print(f'функция {i} 50 перцентилей {dm.report(50, first_time, second_time)},')
-            print(f'функция {i} 75 перцентилей {dm.report(75, first_time, second_time)},')
-            print(f'функция {i} 95 перцентилей {dm.report(95, first_time, second_time)}')
-            print(f'функция {i} 99 перцентилей {dm.report(99, first_time, second_time)}')
-
+def report(first_time='2020-10-27T14:45:42+00:00', second_time='2020-10-27T14:45:43+00:00'):
+    with sqlite3.connect('tests/resources/test.db') as cnx:
+        cur = cnx.cursor()
+        time_first = f"{first_time}"
+        time_second = f"{second_time}"
+        rep_list = []
+        per_list = [50, 75, 95, 99]
+        func_name = list(cur.execute(f'SELECT request FROM my_table WHERE time BETWEEN {time_first} AND {time_second} GROUP BY request'))
+        for func in func_name:
+            mass = cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}" ')
+            add_list = []
+            add_list.append(str(func))
+            for i in per_list:
+                add_list.append(int(numpy.percentile(list(mass), i)))
+            rep_list.append(add_list)
+    return rep_list
 
 if __name__ == "__main__":
     migrate()
-    main("main.db", 'access.log')
+    main("main.db", 'tests/resources/access_mini_false.log')
+    print(report())
+    
