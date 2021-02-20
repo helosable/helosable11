@@ -20,7 +20,7 @@ class main(unittest.TestCase):
         self.assertTrue("5eb63bbbe01eeed093cb22bb8f5acdc3" == pdm.hash_val("hello world"))
 
     def test_insert(self):
-        obj = {"time": "2020-10-27T14:45:42+00:00",
+        obj = {"time": "2020-10-27 14:45",
                "remote_addr": "103.42.20.221",
                "remote_user": "03039",
                "body_bytes_sent": "162",

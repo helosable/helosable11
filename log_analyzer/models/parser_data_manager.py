@@ -5,7 +5,6 @@ import sqlite3
 import hashlib
 import collections
 
-
 class Parser_data_manager:
     def __init__(self, connection_string):
         try:
@@ -76,6 +75,7 @@ class Parser_data_manager:
     def insert_val(self, obj, file_name):
         obj = collections.OrderedDict(sorted(obj.items()))
         obj['file_name'] = file_name
+        # obj['time'] = obj['time'][:10] + ' ' + obj['time'][11:19]
         hashed1 = self.hash_val(obj)
         self._cur.execute("""INSERT OR IGNORE INTO my_table (
             time,
