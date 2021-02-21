@@ -75,7 +75,7 @@ class Parser_data_manager:
     def insert_val(self, obj, file_name):
         obj = collections.OrderedDict(sorted(obj.items()))
         obj['file_name'] = file_name
-        # obj['time'] = obj['time'][:10] + ' ' + obj['time'][11:19]
+        obj['time'] = obj['time'][:10] + ' ' + obj['time'][11:19]
         hashed1 = self.hash_val(obj)
         self._cur.execute("""INSERT OR IGNORE INTO my_table (
             time,
@@ -89,8 +89,8 @@ class Parser_data_manager:
             http_referrer,
             http_user_agent,
             proxy_host,
-            file_name,
-            row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
+            row_hash,
+            file_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
             obj['time'],
             obj['remote_addr'],
             obj['remote_user'],
@@ -102,11 +102,27 @@ class Parser_data_manager:
             obj['http_referrer'],
             obj['http_user_agent'],
             obj['proxy_host'],
-            obj['file_name'],
-            hashed1))
+            hashed1,
+            obj['file_name']))
         self._count = (self._count + 1) % 100000
         if self._count == 0:
             self._cnx.commit()
+
+    @staticmethod
+    def check(cur, hash1):
+        val = cur.execute(""" SELECT remote_addr,
+            remote_user,
+            body_bytes_sent,
+            request_time,
+            status,
+            request,
+            request_method,
+            http_referrer,
+            http_user_agent,
+            proxy_host,
+            file_name """)
+        tab = cur.fetchall()
+        return val
 
     @staticmethod
     def hash_val(val):
