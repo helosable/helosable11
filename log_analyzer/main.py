@@ -4,10 +4,13 @@ from models.parser_data_manager import Parser_data_manager
 import sys
 import sqlite3
 import numpy
-import csv
 
-first_time = sys.argv[1]
-second_time = sys.argv[2]
+
+try:
+    first_time = sys.argv[1]
+    second_time = sys.argv[2]
+except IndexError:
+    pass
 
 
 def json_still_valid(js):
@@ -52,10 +55,13 @@ def migrate():
         with Parser_data_manager('main.db') as dm:
 
             for i in p:
-                obj = {'time' : f'i[0]', 'remote_addr': f'i[1]', 'remote_user': f'i[2]', 'body_bytes_sent': f'i[3]',
-                'request_time': f'i[4]', 'status': f'i[5]', 'request' : f'i[6]', 'request_method': f'i[7]', 'http_referrer': f'i[8]',
-                'http_user_agent': f'i[9]', 'proxy_host': f'i[10]', 'file_name': f'i[12]'}
-                if len(obj['time']) > 20 :
+                obj = {'time': f'{i[0]}', 'remote_addr': f'{i[1]}', 'remote_user': f'{i[2]}',
+                    'body_bytes_sent': f'{i[3]}',
+                    'request_time': f'{i[4]}', 'status': f'{i[5]}', 'request' : f'{i[6]}', 
+                    'request_method': f'{i[7]}', 'http_referrer': f'{i[8]}',
+                    'http_user_agent': f'{i[9]}', 'proxy_host': f'{i[10]}', 
+                    'file_name': f'{i[12]}'}
+                if len(obj['time']) > 20:
                     dm.insert_val(obj, obj['file_name'])
         try:
             cur.execute("DROP TABLE my_table")
@@ -88,7 +94,6 @@ def main(db_name, file_name):
 
 def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
     with sqlite3.connect('main.db') as cnx:
-
         cur = cnx.cursor()
         time_first = f"{first_time}"
         time_second = f"{second_time}"
@@ -99,8 +104,6 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
         func_name1 = cur.execute('SELECT request FROM my_table GROUP BY request ')
         func_name1 = cur.fetchall()
         c_1 = 0
-        # func_name = list(cur.execute(f"SELECT request FROM my_table WHERE time = substr('2020-10-27',1,4)||'-'||substr('2020-10-27',6,7)"))
-        func_name = list(cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN datetime('2020-10-27 14:45:42') AND datetime('2020-10-27 14:45:43') GROUP BY request "))
         func_name = list(cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN datetime('{time_first}') AND datetime('{time_second}') GROUP BY request "))
         with open('templates/report.csv', 'a') as myfile:
             myfile.write("func_name, 50 per, 75 per, 95 per, 99 per \n")

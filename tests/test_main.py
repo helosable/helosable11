@@ -19,6 +19,7 @@ class main_test(unittest.TestCase):
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
         main.main('tests/resources/test_main.db', 'tests/resources/access_mini_false.log')
+        self.report = main.report()
 
     def test_main(self):
         with sqlite3.connect("tests/resources/test_main.db") as cnx:
@@ -37,3 +38,7 @@ class main_test(unittest.TestCase):
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table WHERE time='error'")
             self.assertTrue(len(list(notes)) == 2)
+    
+    def test_report(self):
+        true_list = [0.216, 0.216, 0.216, 0.216 ]
+        self.assertTrue(self.report[0][1:] == true_list)
