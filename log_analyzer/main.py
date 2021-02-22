@@ -105,7 +105,7 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
         func_name1 = cur.fetchall()
         c_1 = 0
         func_name = list(cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN datetime('{time_first}') AND datetime('{time_second}') GROUP BY request "))
-        with open('templates/report.csv', 'a') as myfile:
+        with open('templates/report.csv', 'w') as myfile:
             myfile.write("func_name, 50 per, 75 per, 95 per, 99 per \n")
             for func in func_name:
                 func = func[0]
@@ -120,12 +120,15 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
                 for i in time:
                     new_time.append(float(i[0]))
                 for i in per_list:
-                    new_per_list.append(float(numpy.percentile(new_time, i)))
-                    myfile.write(f"{float(numpy.percentile(new_time, i))}, ")
-                    c_1 += 1
-                    if c_1 == 4:
+                    if c_1 == 3:
                         myfile.write(f"{float(numpy.percentile(new_time, i))},\n")
                         c_1 = 0
+                        c_1 += 0
+                    else:
+                        new_per_list.append(float(numpy.percentile(new_time, i)))
+                        myfile.write(f"{float(numpy.percentile(new_time, i))}, ")
+                        c_1 += 1
+                    
                     
                 time_list.append(new_per_list)
     return time_list
