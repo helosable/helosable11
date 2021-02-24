@@ -99,9 +99,6 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
         time_second = f"{second_time}"
         per_list = [50, 75, 95, 99]
         time_list = []
-        pi = cur.execute("SELECT * FROM my_table")
-        pi = cur.fetchall()
-        func_name1 = cur.execute('SELECT request FROM my_table GROUP BY request ')
         func_name1 = cur.fetchall()
         c_1 = 0
         func_name = list(cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN datetime('{time_first}') AND datetime('{time_second}') GROUP BY request "))
@@ -109,14 +106,25 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
             myfile.write("func_name, 50 per, 75 per, 95 per, 99 per \n")
             for func in func_name:
                 func = func[0]
+                new_func = ''
                 if func == 'error':
                     continue
                 time = cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}" ')
                 time = cur.fetchall()
                 new_time = []
                 new_per_list = []
-                new_per_list.append(func)
-                myfile.write(f'{func}, ')
+                q = 1
+                for i in func:
+                    for l in i :
+                        if q == 0:
+                            break
+                        if l == '?':
+                            l = ''
+                            q = 0
+                        else:
+                            new_func += l
+                new_per_list.append(new_func)
+                myfile.write(f'{new_func}, ')
                 for i in time:
                     new_time.append(float(i[0]))
                 for i in per_list:
@@ -128,13 +136,11 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
                         new_per_list.append(float(numpy.percentile(new_time, i)))
                         myfile.write(f"{float(numpy.percentile(new_time, i))}, ")
                         c_1 += 1
-                    
-                    
                 time_list.append(new_per_list)
     return time_list
 
 
 if __name__ == "__main__":
     migrate()
-    main("main.db", 'tests/resources/access_mini_false.log')
+    main("main.db", 'access.log')
     print(report(first_time, second_time))
