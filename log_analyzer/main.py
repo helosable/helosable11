@@ -118,7 +118,7 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
                     for l in i :
                         if q == 0:
                             break
-                        if l == '?':
+                        if l == '?' or l == ';':
                             l = ''
                             q = 0
                         else:
@@ -128,19 +128,24 @@ def report(first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
                 for i in time:
                     new_time.append(float(i[0]))
                 for i in per_list:
+                    i1 = float(numpy.percentile(new_time, i))
+                    if len(f'{i1}') > 6 :
+                        i1 = float('{:.5f}'.format(i1))
                     if c_1 == 3:
-                        myfile.write(f"{float(numpy.percentile(new_time, i))},\n")
+                        new_per_list.append(i1)
+                        myfile.write(f"{i1},\n")
                         c_1 = 0
-                        c_1 += 0
+                        c_1 += 1
                     else:
-                        new_per_list.append(float(numpy.percentile(new_time, i)))
-                        myfile.write(f"{float(numpy.percentile(new_time, i))}, ")
+                        new_per_list.append(i1)
+                        myfile.write(f"{i1}, ")
                         c_1 += 1
                 time_list.append(new_per_list)
-    return time_list
+                print(new_per_list)
+    
 
 
 if __name__ == "__main__":
     migrate()
     main("main.db", 'access.log')
-    print(report(first_time, second_time))
+    report(first_time, second_time)
