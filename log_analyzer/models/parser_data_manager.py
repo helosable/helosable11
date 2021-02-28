@@ -4,6 +4,7 @@
 import sqlite3
 import hashlib
 import collections
+import numpy
 
 class Parser_data_manager:
     def __init__(self, connection_string):
@@ -108,21 +109,44 @@ class Parser_data_manager:
         if self._count == 0:
             self._cnx.commit()
 
-    @staticmethod
-    def check(cur, hash1):
-        val = cur.execute(""" SELECT remote_addr,
-            remote_user,
-            body_bytes_sent,
-            request_time,
-            status,
-            request,
-            request_method,
-            http_referrer,
-            http_user_agent,
-            proxy_host,
-            file_name """)
-        tab = cur.fetchall()
-        return val
+    def report(self, first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
+        time_first = f"{first_time}"
+        time_second = f"{second_time}"
+        per_list = [50, 75, 95, 99]
+        time_list = []
+        c_1 = 0
+        self._cur.execute(f"SELECT request FROM my_table GROUP BY request ")
+        func_name = list(self._cur.fetchall())
+        time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
+        for func in func_name:
+            func = func[0]
+            new_func = ''
+            if func == 'error':
+                continue
+            self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}" ')
+            time = self._cur.fetchall()
+            new_time = []
+            new_per_list = []
+            q = 1
+            for i in func:
+                for l in i :
+                    if q == 0:
+                        break
+                    if l == '?' or l == ';':
+                        l = ''
+                        q = 0
+                    else:
+                        new_func += l
+            new_per_list.append(new_func)
+            for i in time:
+                new_time.append(float(i[0]))
+            for i in per_list:
+                i1 = float(numpy.percentile(new_time, i))
+                if len(f'{i1}') > 6 :
+                    i1 = float('{:.5f}'.format(i1))
+                new_per_list.append(i1)
+            time_list.append(new_per_list)
+        return time_list
 
     @staticmethod
     def hash_val(val):
