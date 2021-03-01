@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="static/style.css">
+        <link rel="stylesheet" href="../static/style.css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>table</title>
@@ -10,13 +10,13 @@
         <table align="center">
             <tr>
                 {% for header in heading %}
-            <th>{{header}}</th>
+            <th>{{ header }}</th>
                 {% endfor %}
             </tr>
         {% for row in data %}
             <tr>
         {% for item in row %}
-            <td>{{item}}</td>
+            <td>{{ item }}</td>
         {% endfor %}
         </tr>
         {% endfor %}
@@ -25,6 +25,3 @@
         <table id="csvRoot"></table>
     
     </body>
-
-
-    
