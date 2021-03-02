@@ -7,7 +7,7 @@ import collections
 import numpy
 
 class Parser_data_manager:
-    def __init__(self, connection_string, first_time='', second_time=''):
+    def __init__(self, connection_string, first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
         self.first_time = first_time
         self.second_time = second_time
         try:
@@ -162,7 +162,7 @@ class Parser_data_manager:
         per_list = [50, 75, 95, 99]
         time_list = []
         c_1 = 0
-        self._cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN {time_first} AND {time_second} GROUP BY request ")
+        self._cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request ",(self.first_time, self.second_time))
         func_name = list(self._cur.fetchall())
         time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
         for func in func_name:
@@ -191,18 +191,14 @@ class Parser_data_manager:
                 i1 = float(numpy.percentile(new_time, i))
                 if len(f'{i1}') > 6 :
                     i1 = float('{:.5f}'.format(i1))
-                new_per_list.append(i1)
+                new_per_list.append(i1)   
             time_list.append(new_per_list)
         return time_list
 
     def ip_report(self):
-        first_time = self.first_time
-        second_time = self.second_time
-        time_first = f"{first_time}"
-        time_second = f"{second_time}"
         rep_list = []
         rep_list.append(['time', 'func', 'ip'])
-        self._cur.execute(f"SELECT time, request, remote_addr WHERE time BETWEEN {time_first} AND {time_second} FROM my_table")
+        self._cur.execute("SELECT time, request, remote_addr FROM my_table WHERE time BETWEEN ? AND ?",(self.first_time, self.second_time))
         ip_name = list(self._cur.fetchall())
         for ip in ip_name:
             func = ip[1]
