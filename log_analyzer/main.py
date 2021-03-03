@@ -5,15 +5,28 @@ import jinja2
 import argparse
 
 
-parser = argparse.ArgumentParser()
-try:
-    parser.add_argument('-first_time', '-f_t', '--f_time', type = str, default = '2020-10-27 14:45:42')
-    parser.add_argument('-second_time', '-s_t', '--s_time', type = str, default = '2020-10-27 14:45:43')
-    parser.add_argument('-file', '-f', '--log_file', type = str, default = 'tests/resources/access_mini_false.log')
-    parser.add_argument('-rep', '-r', '--rep', type = str, default = 'ip_report')
-    args = parser.parse_args()
-except :    
-    print('args error')
+def args(test = 'test'):
+    parser = argparse.ArgumentParser()
+    if test == 'unit_false':
+        parser.add_argument('-rep', '-r', '--rep', type = str, required = True)
+        args = parser.parse_args()
+        return args
+    if test == 'unit_true' : 
+        parser.add_argument('-rep', '-r', '--rep', type = str, default = 'unit')
+        args = parser.parse_args()
+        return args
+    else:
+        try:
+            parser.add_argument('-first_time', '-f_t', '--f_time', type = str, default = '2020-10-27 14:45:42')
+            parser.add_argument('-second_time', '-s_t', '--s_time', type = str, default = '2020-10-27 14:45:43')
+            parser.add_argument('-file', '-f', '--log_file', type = str, default = 'access.log')
+            parser.add_argument('-rep', '-r', '--rep', type = str, required = True)
+            args = parser.parse_args()
+        except: 
+            print('bad args')
+            raise NameError
+    return args
+
 
 
 with open('config.json', 'r') as config:
@@ -69,6 +82,7 @@ def render(report_name, db_name = db_name):
 
 
 if __name__ == "__main__":
+    args = args()
     migrate(db_name)
     main(db_name, args.log_file)
     render(args.rep)

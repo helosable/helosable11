@@ -18,7 +18,8 @@ class main_test(unittest.TestCase):
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
-        main.main('tests/resources/test_main.db', 'tests/resources/access_mini_false.log')
+        main.main('tests/resources/test_main.db', 'tests/resources/access_mini_false.log')      
+
 
     def test_main(self):
         with sqlite3.connect("tests/resources/test_main.db") as cnx:
@@ -43,3 +44,28 @@ class main_test(unittest.TestCase):
             rep = dm.per_report()
         true_list = [0.216, 0.216, 0.216, 0.216 ]
         self.assertTrue(rep[1][1:] == true_list)
+
+    def test_good_args(self):
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
+        from log_analyzer import main
+        res_test = True
+        try:
+            args = main.args('unit_true')
+        except:
+            res_test = False
+        if res_test == True:
+            self.assertTrue(args.rep == 'unit')
+    
+    def test_bad_args(self):
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
+        from log_analyzer import main
+        test_res = True
+        try:
+            args = main.args('unit_false')
+        except :
+            test_res = False
+        self.assertTrue(test_res == False)
