@@ -7,10 +7,10 @@ import argparse
 
 parser = argparse.ArgumentParser()
 try:
-    parser.add_argument('-first_time', '-f_t', '--f_time', type = str)
-    parser.add_argument('-second_time', '-s_t', '--s_time', type = str)
-    parser.add_argument('-file', '-f', '--log_file', type = str)
-    parser.add_argument('-rep', '-r', '--rep', type = str)
+    parser.add_argument('-first_time', '-f_t', '--f_time', type = str, default = '2020-10-27 14:45:42')
+    parser.add_argument('-second_time', '-s_t', '--s_time', type = str, default = '2020-10-27 14:45:43')
+    parser.add_argument('-file', '-f', '--log_file', type = str, default = 'tests/resources/access_mini_false.log')
+    parser.add_argument('-rep', '-r', '--rep', type = str, default = 'ip_report')
     args = parser.parse_args()
 except :    
     print('args error')
@@ -70,7 +70,5 @@ def render(report_name, db_name = db_name):
 
 if __name__ == "__main__":
     migrate(db_name)
-    with Parser_data_manager(db_name) as dm:
-        dm.second_migration()
     main(db_name, args.log_file)
     render(args.rep)

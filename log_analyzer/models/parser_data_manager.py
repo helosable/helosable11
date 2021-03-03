@@ -18,49 +18,6 @@ class Parser_data_manager:
         except sqlite3.Error:
             print("Error connecting to database!")
 
-    def second_migration(self):
-        self._cur.execute("SELECT * FROM my_table")
-        p = self._cur.fetchall()
-        try:
-            self._cur.execute("""CREATE TABLE new_table (id INTEGER AUTO_INCREMENT,
-        time date,
-        remote_addr VARCHAR,
-        remote_user VARCHAR,
-        body_bytes_sent VARCHAR,
-        request_time VARCHAR,
-        status VARCHAR,
-        request VARCHAR,
-        request_method VARCHAR,
-        http_referrer VARCHAR,
-        http_user_agent VARCHAR,
-        proxy_host VARCHAR,
-        row_hash VARCHAR(35),
-        file_name VARCHAR,
-        PRIMARY KEY(id))""")
-        except sqlite3.OperationalError:
-            pass
-        try:
-            self._cur.execute("CREATE UNIQUE INDEX hash_unique_index_1 ON new_table(row_hash)")
-        except sqlite3.OperationalError:
-            pass
-        for i in p:
-            obj = {'time': f'{i[0]}', 'remote_addr': f'{i[1]}', 'remote_user': f'{i[2]}',
-                'body_bytes_sent': f'{i[3]}',
-                'request_time': f'{i[4]}', 'status': f'{i[5]}', 'request' : f'{i[6]}', 
-                'request_method': f'{i[7]}', 'http_referrer': f'{i[8]}',
-                'http_user_agent': f'{i[9]}', 'proxy_host': f'{i[10]}', 
-                'file_name': f'{i[12]}'}
-            if len(obj['time']) > 20:
-                self.insert_val(obj, obj['file_name'])
-        try:
-            self._cur.execute("DROP TABLE my_table")
-        except sqlite3.OperationalError :
-            pass
-        try:
-            self._cur.execute("ALTER TABLE new_table RENAME TO my_table")
-        except sqlite3.OperationalError :
-            pass
-
     def close(self):
         if self._cnx:
             self._cnx.commit()
