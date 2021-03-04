@@ -7,9 +7,7 @@ import collections
 import numpy
 
 class Parser_data_manager:
-    def __init__(self, connection_string, first_time, second_time):
-        self.first_time = first_time
-        self.second_time = second_time
+    def __init__(self, connection_string):
         try:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
@@ -111,15 +109,11 @@ class Parser_data_manager:
         if self._count == 0:
             self._cnx.commit()
 
-    def per_report(self):
-        first_time = self.first_time
-        second_time = self.second_time
-        time_first = f"{first_time}"
-        time_second = f"{second_time}"
+    def per_report(self, first_time, second_time):
         per_list = [50, 75, 95, 99]
         time_list = []
         c_1 = 0
-        func_name = self._cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request ",(self.first_time, self.second_time))
+        func_name = self._cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request ",(first_time, second_time))
         time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
         for func in func_name:
             func = func[0]
@@ -151,10 +145,10 @@ class Parser_data_manager:
             time_list.append(new_per_list)
         return time_list
 
-    def ip_report(self):
+    def ip_report(self, first_time, second_time):
         rep_list = []
         rep_list.append(['time', 'func', 'ip'])
-        ip_name = self._cur.execute("SELECT time, request, remote_addr FROM my_table WHERE time BETWEEN ? AND ?",(self.first_time, self.second_time))
+        ip_name = self._cur.execute("SELECT time, request, remote_addr FROM my_table WHERE time BETWEEN ? AND ?",(first_time, second_time))
         for ip in ip_name:
             func = ip[1]
             new_func = ''

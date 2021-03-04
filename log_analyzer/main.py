@@ -52,7 +52,7 @@ def migrate(db_name):
 def main(db_name, file_name):
     try:
         with open(file_name, "r") as myfile:
-            with Parser_data_manager(db_name, args.f_time, args.s_time) as dm:
+            with Parser_data_manager(db_name) as dm:
                 count = 0
                 for line in myfile:
                     row = json_still_valid(line)
@@ -63,17 +63,17 @@ def main(db_name, file_name):
                     count += 1
 
     except FileNotFoundError:
-        print("file 'access.log' not found")
+        print(f"file '{file_name}' not found")
     except Exception as e:
         print(repr(e))
 
 def render(report_name, db_name = db_name):
-    with Parser_data_manager(db_name, args.f_time, args.s_time) as dm:
+    with Parser_data_manager(db_name) as dm:
         if report_name == 'ip_report':
-            rep = dm.ip_report()
+            rep = dm.ip_report(args.f_time, args.s_time)
             file_name = str(report_name)
         if report_name == 'per_report':
-            rep = dm.per_report()
+            rep = dm.per_report(args.f_time, args.s_time)
             file_name = str(report_name)
     headings = rep[0]
     data = rep[1:]

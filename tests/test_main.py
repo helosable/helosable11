@@ -41,7 +41,7 @@ class main_test(unittest.TestCase):
     
     def test_report(self):
         with pdm('tests/resources/test_main.db') as dm:
-            rep = dm.per_report()
+            rep = dm.per_report('2020-10-27 14:45:42', '2020-10-27 14:45:43')
         true_list = [0.216, 0.216, 0.216, 0.216 ]
         self.assertTrue(rep[1][1:] == true_list)
 
