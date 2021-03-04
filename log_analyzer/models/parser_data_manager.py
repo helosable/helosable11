@@ -7,7 +7,7 @@ import collections
 import numpy
 
 class Parser_data_manager:
-    def __init__(self, connection_string, first_time='2020-10-27 14:45:42', second_time='2020-10-27 14:45:43'):
+    def __init__(self, connection_string, first_time, second_time):
         self.first_time = first_time
         self.second_time = second_time
         try:
@@ -119,8 +119,7 @@ class Parser_data_manager:
         per_list = [50, 75, 95, 99]
         time_list = []
         c_1 = 0
-        self._cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request ",(self.first_time, self.second_time))
-        func_name = list(self._cur.fetchall())
+        func_name = self._cur.execute(f"SELECT request FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request ",(self.first_time, self.second_time))
         time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
         for func in func_name:
             func = func[0]
@@ -155,8 +154,7 @@ class Parser_data_manager:
     def ip_report(self):
         rep_list = []
         rep_list.append(['time', 'func', 'ip'])
-        self._cur.execute("SELECT time, request, remote_addr FROM my_table WHERE time BETWEEN ? AND ?",(self.first_time, self.second_time))
-        ip_name = list(self._cur.fetchall())
+        ip_name = self._cur.execute("SELECT time, request, remote_addr FROM my_table WHERE time BETWEEN ? AND ?",(self.first_time, self.second_time))
         for ip in ip_name:
             func = ip[1]
             new_func = ''

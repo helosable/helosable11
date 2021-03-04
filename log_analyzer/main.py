@@ -52,7 +52,7 @@ def migrate(db_name):
 def main(db_name, file_name):
     try:
         with open(file_name, "r") as myfile:
-            with Parser_data_manager(db_name) as dm:
+            with Parser_data_manager(db_name, args.f_time, args.s_time) as dm:
                 count = 0
                 for line in myfile:
                     row = json_still_valid(line)
