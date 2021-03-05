@@ -5,34 +5,23 @@ import jinja2
 import argparse
 
 
-def args(test = 'test'):
+def args():
     parser = argparse.ArgumentParser()
-    if test == 'unit_false':
+    try:
+        parser.add_argument('-first_time', '-f_t', '--f_time', type = str, default = '2020-10-27 14:45:42')
+        parser.add_argument('-second_time', '-s_t', '--s_time', type = str, default = '2020-10-27 14:45:43')
+        parser.add_argument('-file', '-f', '--log_file', type = str, default = 'access.log')
         parser.add_argument('-rep', '-r', '--rep', type = str, required = True)
         args = parser.parse_args()
-        return args
-    if test == 'unit_true' : 
-        parser.add_argument('-rep', '-r', '--rep', type = str, default = 'unit')
-        args = parser.parse_args()
-        return args
-    else:
-        try:
-            parser.add_argument('-first_time', '-f_t', '--f_time', type = str, default = '2020-10-27 14:45:42')
-            parser.add_argument('-second_time', '-s_t', '--s_time', type = str, default = '2020-10-27 14:45:43')
-            parser.add_argument('-file', '-f', '--log_file', type = str, default = 'access.log')
-            parser.add_argument('-rep', '-r', '--rep', type = str, required = True)
-            args = parser.parse_args()
-        except: 
-            print('bad args')
-            raise NameError
+    except: 
+        print('bad args')
+        raise NameError
     return args
-
-
 
 with open('config.json', 'r') as config:
     settings_data = next(ijson.items(config, '', multiple_values=True))
-db_name = settings_data['db']
-api_token = settings_data['api_token']
+    db_name = settings_data['db']
+    api_token = settings_data['api_token']
 
 def json_still_valid(js):
     try:

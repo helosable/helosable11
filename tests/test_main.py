@@ -52,11 +52,11 @@ class main_test(unittest.TestCase):
         from log_analyzer import main
         res_test = True
         try:
-            args = main.args('unit_true')
+            args = main.args()
         except:
             res_test = False
         if res_test == True:
-            self.assertTrue(args.rep == 'unit')
+            self.assertTrue(args.log_file == 'access.log')
     
     def test_bad_args(self):
         import sys
@@ -65,7 +65,7 @@ class main_test(unittest.TestCase):
         from log_analyzer import main
         test_res = True
         try:
-            args = main.args('unit_false')
-        except :
+            args = main.args()
+        except NameError:
             test_res = False
         self.assertTrue(test_res == False)

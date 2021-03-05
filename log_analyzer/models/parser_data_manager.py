@@ -109,6 +109,20 @@ class Parser_data_manager:
         if self._count == 0:
             self._cnx.commit()
 
+    def func_name(self, func):
+        new_func = ''
+        for i in func:
+            q = 1
+            for l in i :
+                if q == 0:
+                    break
+                if l == '?' or l == ';':
+                    l = ''
+                    q = 0
+                else:
+                    new_func += l
+        return new_func
+
     def per_report(self, first_time, second_time):
         per_list = [50, 75, 95, 99]
         time_list = []
@@ -117,7 +131,6 @@ class Parser_data_manager:
         time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
         for func in func_name:
             func = func[0]
-            new_func = ''
             if func == 'error':
                 continue
             self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}" ')
@@ -125,16 +138,7 @@ class Parser_data_manager:
             new_time = []
             new_per_list = []
             q = 1
-            for i in func:
-                for l in i :
-                    if q == 0:
-                        break
-                    if l == '?' or l == ';':
-                        l = ''
-                        q = 0
-                    else:
-                        new_func += l
-            new_per_list.append(new_func)
+            new_per_list.append(self.func_name(func))
             for i in time:
                 new_time.append(float(i[0]))
             for i in per_list:
@@ -150,21 +154,9 @@ class Parser_data_manager:
         rep_list.append(['time', 'func', 'ip'])
         ip_name = self._cur.execute("SELECT time, request, remote_addr FROM my_table WHERE time BETWEEN ? AND ?",(first_time, second_time))
         for ip in ip_name:
-            func = ip[1]
-            new_func = ''
             if ip == 'error':
                 continue
-            q = 1
-            for i in func:
-                for l in i :
-                    if q == 0:
-                        break
-                    if l == '?' or l == ';':
-                        l = ''
-                        q = 0
-                    else:
-                        new_func += l
-                    time_list = [ip[0], new_func, ip[2]]
+            time_list = [ip[0], self.func_name(ip[1]), ip[2]]
             rep_list.append(time_list)
         return rep_list
 
