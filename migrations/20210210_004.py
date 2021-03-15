@@ -18,7 +18,7 @@ steps = [
     row_hash VARCHAR(35),
     file_name VARCHAR,
     PRIMARY KEY(id))"""),
-    step("CREATE UNIQUE INDEX hash_unique_index_1 ON new_table(row_hash)"),
+    # step("CREATE UNIQUE INDEX hash_unique_index_1 ON new_table(row_hash)"),
     step(""" 
     INSERT OR IGNORE INTO new_table (
             time,

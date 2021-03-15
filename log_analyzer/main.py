@@ -3,6 +3,7 @@ from yoyo import read_migrations, get_backend
 from models.parser_data_manager import Parser_data_manager
 import jinja2
 import argparse
+import time 
 
 
 def args():
@@ -43,7 +44,11 @@ def main(db_name, file_name):
         with open(file_name, "r") as myfile:
             with Parser_data_manager(db_name) as dm:
                 count = 0
+                start = time.time()
                 for line in myfile:
+                    if dm.count == 0:
+                        print(f'коммит занял {str(time.time()-start)[:4]}, секунд строчек в базе всего {len(dm.row_count())}, не уникальных записей в файле примерно {count - len(dm.row_count())}')
+                        start = time.time()
                     row = json_still_valid(line)
                     if not row:
                         dm.false_insert_val(line)

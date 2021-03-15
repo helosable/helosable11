@@ -11,7 +11,7 @@ class Parser_data_manager:
         try:
             self._cnx = sqlite3.connect(connection_string)
             self._cur = self._cnx.cursor()
-            self._count = 0
+            self.count = 0
             self._error_count = 1
         except sqlite3.Error:
             print("Error connecting to database!")
@@ -105,8 +105,8 @@ class Parser_data_manager:
             obj['proxy_host'],
             hashed1,
             obj['file_name']))
-        self._count = (self._count + 1) % 100000
-        if self._count == 0:
+        self.count = (self.count + 1) % 250000
+        if self.count == 0:
             self._cnx.commit()
 
     def func_name(self, func):
@@ -160,7 +160,11 @@ class Parser_data_manager:
             rep_list.append(time_list)
         return rep_list
 
+    def row_count(self):
+        self._cur.execute('select * from my_table')
+        return self._cur.fetchall()
+
     @staticmethod
     def hash_val(val):
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
-
+        
