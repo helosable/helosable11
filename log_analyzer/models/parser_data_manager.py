@@ -5,17 +5,16 @@ import sqlite3
 import hashlib
 import collections
 import numpy
+from yoyo import read_migrations, get_backend
 
 
 class Parser_data_manager:
     def __init__(self, connection_string):
-        try:
-            self._cnx = sqlite3.connect(connection_string)
-            self._cur = self._cnx.cursor()
-            self.count = 0
-            self._error_count = 1
-        except sqlite3.Error:
-            print("Error connecting to database!")
+        self.db_name = connection_string
+        self._cnx = sqlite3.connect(self.db_name)
+        self._cur = self._cnx.cursor()
+        self.count = 0
+        self._error_count = 1
 
     def close(self):
         if self._cnx:
@@ -28,6 +27,12 @@ class Parser_data_manager:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+
+    def migrate(self):
+        backend = get_backend(f"sqlite:///{self.db_name}")
+        migration = read_migrations("./migrations")
+        with backend.lock():
+            backend.apply_migrations(backend.to_apply(migration))
 
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
@@ -153,8 +158,9 @@ class Parser_data_manager:
     def ip_report(self, first_time, second_time):
         rep_list = []
         rep_list.append(['time', 'func', 'ip'])
-        ip_name = self._cur.execute("""SELECT time, request, remote_addr
+        self._cur.execute("""SELECT time, request, remote_addr
         FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
+        ip_name = self._cur.fetchall()
         for ip in ip_name:
             if ip == 'error':
                 continue

@@ -66,5 +66,8 @@ class main_test(unittest.TestCase):
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
-        args = main.parse_args([])
-        self.assertTrue(args is False)
+        try:
+            main.parse_args([])
+        except SystemExit:
+            test_res = False
+        self.assertTrue(test_res is False)
