@@ -3,25 +3,29 @@ from yoyo import read_migrations, get_backend
 from models.parser_data_manager import Parser_data_manager
 import jinja2
 import argparse
+import sys
 
 
-def args():
+def parse_args(args):
     parser = argparse.ArgumentParser()
     try:
         parser.add_argument('-first_time', '-f_t', '--f_time', type=str, default='2020-10-27 14:45:42')
         parser.add_argument('-second_time', '-s_t', '--s_time', type=str, default='2020-10-27 14:45:43')
         parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
         parser.add_argument('-rep', '-r', '--rep', type=str, required=True)
-        args = parser.parse_args()
-    except argparse.ArgumentError:
+        parser.add_argument('-report_only', '--rep_only', action = 'store_true')
+        parsed_args = parser.parse_args(args)
+    except (argparse.ArgumentTypeError, argparse.ArgumentTypeError, SystemExit):
         print('bad args')
         raise NameError
-    return args
+    return parsed_args
 
-with open('config.json', 'r') as config:
-    settings_data = next(ijson.items(config, '', multiple_values=True))
-    db_name = settings_data['db']
-    api_token = settings_data['api_token']
+
+def json_read():
+    with open('config.json', 'r') as config:
+        return next(ijson.items(config, '', multiple_values=True))
+
+settings = json_read()
 
 
 def json_still_valid(js):
@@ -55,8 +59,9 @@ def main(db_name, file_name):
         print(repr(e))
 
 
-def render(report_name, db_name=db_name):
+def render(report_name, db_name=settings['db']):
     with Parser_data_manager(db_name) as dm:
+        args = parse_args(sys.argv[1:])
         if report_name == 'ip_report':
             rep = dm.ip_report(args.f_time, args.s_time)
             file_name = str(report_name)
@@ -71,7 +76,9 @@ def render(report_name, db_name=db_name):
 
 
 if __name__ == "__main__":
-    args = args()
-    migrate(db_name)
-    main(db_name, args.log_file)
+    args = parse_args(sys.argv[1:])
+    if args.rep_only == True:
+        render(args.rep)
+    migrate(settings['db'])
+    main(settings['db'], args.log_file)
     render(args.rep)

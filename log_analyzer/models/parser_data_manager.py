@@ -127,8 +127,9 @@ class Parser_data_manager:
     def per_report(self, first_time, second_time):
         per_list = [50, 75, 95, 99]
         time_list = []
-        func_name = self._cur.execute("""SELECT request FROM my_table
+        self._cur.execute("""SELECT request FROM my_table
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
+        func_name = self._cur.fetchall()
         time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
         for func in func_name:
             func = func[0]
@@ -153,7 +154,7 @@ class Parser_data_manager:
         rep_list = []
         rep_list.append(['time', 'func', 'ip'])
         ip_name = self._cur.execute("""SELECT time, request, remote_addr
-        FROM my_table WHERE time BETWEEN ? AND ?""", (first_time, second_time))
+        FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         for ip in ip_name:
             if ip == 'error':
                 continue

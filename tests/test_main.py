@@ -45,18 +45,21 @@ class main_test(unittest.TestCase):
         true_list = [0.216, 0.216, 0.216, 0.216]
         self.assertTrue(rep[1][1:] == true_list)
 
+    def test_json_read(self):
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
+        from log_analyzer import main
+        settings = main.json_read()
+        self.assertTrue(settings['db'] == 'main.db')
+
     def test_good_args(self):
         import sys
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
-        res_test = True
-        try:
-            args = main.args()
-        except:
-            res_test = False
-        if res_test == True:
-            self.assertTrue(args.log_file == 'access.log')
+        args = main.parse_args(['--rep', 'ip_report'])
+        self.assertTrue(args.rep == 'ip_report')
 
     def test_bad_args(self):
         import sys
@@ -65,7 +68,7 @@ class main_test(unittest.TestCase):
         from log_analyzer import main
         test_res = True
         try:
-            args = main.args()
-        except:
+            main.parse_args([])
+        except NameError:
             test_res = False
-        self.assertTrue(test_res == False)
+        self.assertTrue(test_res is False)
