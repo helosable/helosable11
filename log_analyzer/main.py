@@ -60,10 +60,9 @@ if __name__ == "__main__":
     settings = json_read()
     try:
         args = parse_args(sys.argv[1:])
-        if args.rep_only:
-            render(args.rep)
-            sys.exit()
-        parse_log_file(settings['db'], args.log_file)
+        if not args.rep_only:
+            parse_log_file(settings['db'], args.log_file)
+        
         render(args.rep)
     except (argparse.ArgumentTypeError, sqlite3.OperationalError, TypeError, FileNotFoundError) as error:
         print(error)
