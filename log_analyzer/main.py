@@ -39,7 +39,6 @@ def main(db_name, file_name, report_name='ip_report'):
                         dm.false_insert_val(line)
                         continue
                     dm.insert_val(row, file_name)
-            render(report_name)
     except (TypeError, sqlite3.OperationalError, FileNotFoundError) as error:
         print(error)
         return False
@@ -67,7 +66,8 @@ if __name__ == "__main__":
         args = parse_args(sys.argv[1:])
         if args.rep_only:
             render(args.rep)
-        else:   
-            main(settings['db'], args.log_file, args.rep)
+        else:
+            main(settings['db'], args.log_file)
+            render(args.rep)
     except (argparse.ArgumentTypeError, sqlite3.ProgrammingError) as error:
         print (error)
