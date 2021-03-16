@@ -13,11 +13,11 @@ def parse_args(args):
         parser.add_argument('-second_time', '-s_t', '--s_time', type=str, default='2020-10-27 14:45:43')
         parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
         parser.add_argument('-rep', '-r', '--rep', type=str, required=True)
-        parser.add_argument('-report_only', '--rep_only', action = 'store_true')
+        parser.add_argument('-report_only', '--rep_only', action='store_true')
         parsed_args = parser.parse_args(args)
     except (argparse.ArgumentTypeError, argparse.ArgumentTypeError, SystemExit):
         print('bad args')
-        raise NameError
+        return False
     return parsed_args
 
 
@@ -77,8 +77,11 @@ def render(report_name, db_name=settings['db']):
 
 if __name__ == "__main__":
     args = parse_args(sys.argv[1:])
-    if args.rep_only == True:
+    if args is False:
+        print('bad args')
+    else:
+        if args.rep_only is True:
+            render(args.rep)
+        migrate(settings['db'])
+        main(settings['db'], args.log_file)
         render(args.rep)
-    migrate(settings['db'])
-    main(settings['db'], args.log_file)
-    render(args.rep)

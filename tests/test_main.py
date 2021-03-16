@@ -66,9 +66,5 @@ class main_test(unittest.TestCase):
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
-        test_res = True
-        try:
-            main.parse_args([])
-        except NameError:
-            test_res = False
-        self.assertTrue(test_res is False)
+        args = main.parse_args([])
+        self.assertTrue(args is False)
