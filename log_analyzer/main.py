@@ -8,8 +8,8 @@ import sqlite3
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-first_time', '-f_t', '--f_time', type=str, default='2020-10-27 14:45:42')
-    parser.add_argument('-second_time', '-s_t', '--s_time', type=str, default='2020-10-27 14:45:43')
+    parser.add_argument('-first_time', '-f_t', '--f_time', type=str)
+    parser.add_argument('-second_time', '-s_t', '--s_time', type=str)
     parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
     parser.add_argument('-rep', '-r', '--rep', type=str, required=True)
     parser.add_argument('-report_only', '--rep_only', action='store_true')
@@ -67,4 +67,5 @@ if __name__ == "__main__":
         render(args.rep)
     except (argparse.ArgumentTypeError, sqlite3.OperationalError, TypeError, FileNotFoundError) as error:
         print(error)
-        sys.exit()
+        sys.exit(1)
+    sys.exit(0)
