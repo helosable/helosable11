@@ -19,7 +19,7 @@ class main_test(unittest.TestCase):
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
-        main.main('tests/resources/test_main.db', 'tests/resources/access_mini_false.log')
+        main.parse_log_file('tests/resources/test_main.db', 'tests/resources/access_mini_false.log')
 
     def test_main(self):
         with sqlite3.connect("tests/resources/test_main.db") as cnx:

@@ -28,20 +28,16 @@ def json_still_valid(js):
         return False
 
 
-def main(db_name, file_name, report_name='ip_report'):
-    try:
-        with Parser_data_manager(db_name) as dm:
-            dm.migrate()
-            with open(file_name, "r") as myfile:
-                for line in myfile:
-                    row = json_still_valid(line)
-                    if not row:
-                        dm.false_insert_val(line)
-                        continue
-                    dm.insert_val(row, file_name)
-    except (TypeError, sqlite3.OperationalError, FileNotFoundError) as error:
-        print(error)
-        return False
+def parse_log_file(db_name, file_name, report_name='ip_report'):
+    with Parser_data_manager(db_name) as dm:
+        dm.migrate()
+        with open(file_name, "r") as myfile:
+            for line in myfile:
+                row = json_still_valid(line)
+                if not row:
+                    dm.false_insert_val(line)
+                    continue
+                dm.insert_val(row, file_name)
 
 
 def render(report_name):
@@ -66,8 +62,9 @@ if __name__ == "__main__":
         args = parse_args(sys.argv[1:])
         if args.rep_only:
             render(args.rep)
-        else:
-            main(settings['db'], args.log_file)
-            render(args.rep)
-    except (argparse.ArgumentTypeError, sqlite3.ProgrammingError) as error:
-        print (error)
+            sys.exit()
+        parse_log_file(settings['db'], args.log_file)
+        render(args.rep)
+    except (argparse.ArgumentTypeError, sqlite3.OperationalError, TypeError, FileNotFoundError) as error:
+        print(error)
+        sys.exit()
