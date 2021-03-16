@@ -20,8 +20,6 @@ def json_read():
     with open('config.json', 'r') as config:
         return next(ijson.items(config, '', multiple_values=True))
 
-settings = json_read()
-
 
 def json_still_valid(js):
     try:
@@ -30,7 +28,7 @@ def json_still_valid(js):
         return False
 
 
-def main(db_name, file_name):
+def main(db_name, file_name, report_name='ip_report'):
     try:
         with Parser_data_manager(db_name) as dm:
             dm.migrate()
@@ -41,7 +39,7 @@ def main(db_name, file_name):
                         dm.false_insert_val(line)
                         continue
                     dm.insert_val(row, file_name)
-        return True
+            render(report_name)
     except (TypeError, sqlite3.OperationalError, FileNotFoundError) as error:
         print(error)
         return False
@@ -64,17 +62,12 @@ def render(report_name):
 
 
 if __name__ == "__main__":
-    run = True
+    settings = json_read()
     try:
         args = parse_args(sys.argv[1:])
-    except argparse.ArgumentTypeError:
-        print('bad_args')
-        run = False
-    if run:
         if args.rep_only:
-            try:
-                render(args.rep)
-            except sqlite3.ProgrammingError:
-                print('database is empty')
-        if main(settings['db'], args.log_file):
             render(args.rep)
+        else:   
+            main(settings['db'], args.log_file, args.rep)
+    except (argparse.ArgumentTypeError, sqlite3.ProgrammingError) as error:
+        print (error)
