@@ -66,4 +66,5 @@ if __name__ == "__main__":
         render(args.rep)
     except (argparse.ArgumentTypeError, sqlite3.OperationalError, TypeError, FileNotFoundError) as error:
         print(error)
-        sys.exit()
+        sys.exit(1)
+    sys.exit(0)
