@@ -31,15 +31,20 @@ def json_still_valid(js):
 
 
 def main(db_name, file_name):
-    with open(file_name, "r") as myfile:
+    try:
         with Parser_data_manager(db_name) as dm:
             dm.migrate()
-            for line in myfile:
-                row = json_still_valid(line)
-                if not row:
-                    dm.false_insert_val(line)
-                    continue
-                dm.insert_val(row, file_name)
+            with open(file_name, "r") as myfile:
+                for line in myfile:
+                    row = json_still_valid(line)
+                    if not row:
+                        dm.false_insert_val(line)
+                        continue
+                    dm.insert_val(row, file_name)
+        return True
+    except (TypeError, sqlite3.OperationalError, FileNotFoundError) as error:
+        print(error)
+        return False
 
 
 def render(report_name):
@@ -62,14 +67,14 @@ if __name__ == "__main__":
     run = True
     try:
         args = parse_args(sys.argv[1:])
-    except SystemExit:
+    except argparse.ArgumentTypeError:
+        print('bad_args')
         run = False
-    if run is not False:
-        if args.rep_only is True:
+    if run:
+        if args.rep_only:
             try:
                 render(args.rep)
-            except sqlite3.OperationalError:
+            except sqlite3.ProgrammingError:
                 print('database is empty')
-        else:
-            main(settings['db'], args.log_file)
+        if main(settings['db'], args.log_file):
             render(args.rep)
