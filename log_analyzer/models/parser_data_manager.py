@@ -4,14 +4,14 @@
 import sqlite3
 import hashlib
 import collections
-import numpy
 from yoyo import read_migrations, get_backend
+import ijson
 
 
 class Parser_data_manager:
     def __init__(self, connection_string):
         self.db_name = connection_string
-        self._cnx = sqlite3.connect(self.db_name)
+        self._cnx = sqlite3.connect(connection_string)
         self._cur = self._cnx.cursor()
         self.count = 0
         self._error_count = 1
@@ -33,6 +33,12 @@ class Parser_data_manager:
         migration = read_migrations("./migrations")
         with backend.lock():
             backend.apply_migrations(backend.to_apply(migration))
+
+    def json_still_valid(self, js):
+        try:
+            return next(ijson.items(js, "", multiple_values=True))
+        except ijson.common.IncompleteJSONError:
+            return False
 
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
@@ -115,58 +121,13 @@ class Parser_data_manager:
         if self.count == 0:
             self._cnx.commit()
 
-    def func_name(self, func):
-        new_func = ''
-        for i in func:
-            q = 1
-            for l1 in i:
-                if q == 0:
-                    break
-                if l1 == '?' or l1 == ';':
-                    l1 = ''
-                    q = 0
-                else:
-                    new_func += l1
-        return new_func
+    def val_return_with_time(self, command, first_time, second_time):
+        self._cur.execute(command, (first_time, second_time))
+        return self._cur.fetchall()
 
-    def per_report(self, first_time, second_time):
-        per_list = [50, 75, 95, 99]
-        time_list = []
-        self._cur.execute("""SELECT request FROM my_table
-        WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
-        func_name = self._cur.fetchall()
-        time_list.append(['func_name', '50 per', '90 per', '95 per', '99 per'])
-        for func in func_name:
-            func = func[0]
-            if func == 'error':
-                continue
-            self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}" ')
-            time = self._cur.fetchall()
-            new_time = []
-            new_per_list = []
-            new_per_list.append(self.func_name(func))
-            for i in time:
-                new_time.append(float(i[0]))
-            for i in per_list:
-                i1 = float(numpy.percentile(new_time, i))
-                if len(f'{i1}') > 6:
-                    i1 = float('{:.5f}'.format(i1))
-                new_per_list.append(i1)
-            time_list.append(new_per_list)
-        return time_list
-
-    def ip_report(self, first_time, second_time):
-        rep_list = []
-        rep_list.append(['time', 'func', 'ip'])
-        self._cur.execute("""SELECT time, request, remote_addr
-        FROM my_table WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
-        ip_name = self._cur.fetchall()
-        for ip in ip_name:
-            if ip == 'error':
-                continue
-            time_list = [ip[0], self.func_name(ip[1]), ip[2]]
-            rep_list.append(time_list)
-        return rep_list
+    def val_return(self, command):
+        self._cur.execute(command)
+        return self._cur.fetchall()
 
     @staticmethod
     def hash_val(val):

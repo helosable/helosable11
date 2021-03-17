@@ -7,13 +7,13 @@ from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 class main(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        backend = get_backend("sqlite:///tests/resources/test.db")
+        backend = get_backend("sqlite:///tests/resources/test_pdm.db")
         migrations = read_migrations("./migrations")
         with backend.lock():
             backend.apply_migrations(backend.to_apply(migrations))
 
     def setUp(self):
-        with sqlite3.connect('tests/resources/test.db') as cnx:
+        with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
             cnx.execute("""DELETE FROM my_table""")
 
     def test_hash(self):
@@ -31,9 +31,9 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db') as dm:
+        with pdm('tests/resources/test_pdm.db') as dm:
             dm.insert_val(obj, 'access_mini_false.log')
-        with sqlite3.connect('tests/resources/test.db') as cnx:
+        with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
             cur = cnx.cursor()
             cur.execute("""SELECT time,
                         remote_addr,
@@ -61,10 +61,10 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db') as dm:
+        with pdm('tests/resources/test_pdm.db') as dm:
             for i in range(2):
                 dm.insert_val(obj, 'access_mini_false.log')
-        with sqlite3.connect('tests/resources/test.db') as cnx:
+        with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
             cur = cnx.cursor()
             cur.execute("""SELECT * FROM my_table""")
             row = cur.fetchall()
@@ -82,18 +82,14 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test.db') as dm:
+        with pdm('tests/resources/test_pdm.db') as dm:
             for i in range(2):
                 dm.false_insert_val(obj)
-            with sqlite3.connect('tests/resources/test.db') as cnx:
+            with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
                 cur = cnx.cursor()
                 row = cur.execute("SELECT * FROM my_table")
                 self.assertTrue(len(list(row)) == 2)
 
-    def test_func_name(self):
-        word = 'func?'
-        with pdm('tests/resources/test.db') as dm:
-            self.assertTrue(len(dm.func_name(word)) == 4)
 
 if __name__ == "__main__":
     unittest.main()

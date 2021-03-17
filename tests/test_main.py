@@ -1,7 +1,6 @@
 import unittest
 import sqlite3
 from yoyo import read_migrations, get_backend
-from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
 
 
 class main_test(unittest.TestCase):
@@ -38,12 +37,6 @@ class main_test(unittest.TestCase):
             cur = cnx.cursor()
             notes = cur.execute("SELECT * FROM my_table WHERE time='error'")
             self.assertTrue(len(list(notes)) == 2)
-
-    def test_report(self):
-        with pdm('tests/resources/test_main.db') as dm:
-            rep = dm.per_report('2020-10-27 14:45:42', '2020-10-27 14:45:43')
-        true_list = [0.216, 0.216, 0.216, 0.216]
-        self.assertTrue(rep[1][1:] == true_list)
 
     def test_json_read(self):
         import sys
