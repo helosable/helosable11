@@ -28,12 +28,6 @@ class Parser_data_manager:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
-    def migrate(self):
-        backend = get_backend(f"sqlite:///{self.db_name}")
-        migration = read_migrations("./migrations")
-        with backend.lock():
-            backend.apply_migrations(backend.to_apply(migration))
-
     def json_still_valid(self, js):
         try:
             return next(ijson.items(js, "", multiple_values=True))
@@ -121,14 +115,26 @@ class Parser_data_manager:
         if self.count == 0:
             self._cnx.commit()
 
-    def val_return_with_time(self, command, first_time, second_time):
-        self._cur.execute(command, (first_time, second_time))
+    def val_return_for_per_report(self, first_time, second_time, is_time_need=False, func=None):
+        if is_time_need:
+            self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}"')
+            return self._cur.fetchall()
+        self._cur.execute("""SELECT request, status FROM my_table request
+        WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()
 
-    def val_return(self, command):
-        self._cur.execute(command)
+    def val_return_for_ip_report(self, first_time, second_time):
+        self._cur.execute("""SELECT time, request, remote_addr, status FROM my_table
+        WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()
 
     @staticmethod
     def hash_val(val):
         return hashlib.md5(str(val).encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def migrate(db_name):
+        backend = get_backend(f"sqlite:///{db_name}")
+        migration = read_migrations("./migrations")
+        with backend.lock():
+            backend.apply_migrations(backend.to_apply(migration))

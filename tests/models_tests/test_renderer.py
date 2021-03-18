@@ -24,7 +24,7 @@ class main(unittest.TestCase):
     def test_func_name(self):
         word = 'func?'
         with Renderer('tests/resources/test_renderer.db') as ren:
-            self.assertTrue(len(ren.func_name(word)) == 4)
+            self.assertTrue(len(ren.func_name_change(word)) == 4)
 
     def test_per_report(self):
         with Renderer('tests/resources/test_renderer.db') as ren:
