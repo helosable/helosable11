@@ -3,6 +3,7 @@ from models.parser_data_manager import Parser_data_manager
 from models.renderer import Renderer
 import argparse
 import sys
+import os
 import sqlite3
 
 
@@ -11,7 +12,7 @@ def parse_args(args):
     parser.add_argument('-first_time', '-f_t', '--f_time', type=str)
     parser.add_argument('-second_time', '-s_t', '--s_time', type=str)
     parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
-    parser.add_argument('-rep', '-r', '--rep', type=str, required=True)
+    parser.add_argument('-rep', '-r', '--rep', type=str)
     parser.add_argument('-report_only', '--rep_only', action='store_true')
     return parser.parse_args(args)
 
@@ -22,11 +23,11 @@ def json_read():
 
 
 def parse_log_file(db_name, file_name):
-    Parser_data_manager.migrate(db_name)
     with Parser_data_manager(db_name) as dm:
+        dm.migrate(db_name)
         with open(file_name, "r") as myfile:
             for line in myfile:
-                row = dm.json_still_valid(line)
+                row = render.json_still_valid(line)
                 if not row:
                     dm.false_insert_val(line)
                     continue
@@ -37,13 +38,18 @@ if __name__ == "__main__":
     settings = json_read()
     try:
         args = parse_args(sys.argv[1:])
-        with Renderer(settings['db']) as render:
+        if os.path.exists(args.log_file):
+            render = Renderer()
             if args.rep_only:
                 render.main_render(args.rep, args.f_time, args.s_time)
                 sys.exit()
             parse_log_file(settings['db'], args.log_file)
             render.main_render(args.rep, args.f_time, args.s_time)
+        else:
+            print('1, file for parsing was not found')
+            sys.exit
     except (argparse.ArgumentTypeError, sqlite3.OperationalError, TypeError, FileNotFoundError) as error:
-        print(error)
+        print(1, error)
         sys.exit()
+    print(0)
     sys.exit()
