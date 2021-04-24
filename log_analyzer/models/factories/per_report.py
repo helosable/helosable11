@@ -2,7 +2,8 @@ import sys
 import os
 import numpy
 sys.path.append(os.getcwd())
-from log_analyzer.models.parser_data_manager import Parser_data_manager 
+from log_analyzer.models.parser_data_manager import Parser_data_manager
+
 
 class Per_report(Parser_data_manager):
     def render(self, first_time, second_time):

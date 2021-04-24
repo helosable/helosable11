@@ -1,7 +1,6 @@
 import unittest
 import sqlite3
 from yoyo import read_migrations, get_backend
-from log_analyzer.models.renderer import Renderer
 
 
 class main(unittest.TestCase):
@@ -18,11 +17,14 @@ class main(unittest.TestCase):
         import sys
         import os
         sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../log_analyzer")
+        sys.path.append(os.getcwd())
         from log_analyzer import main
         main.parse_log_file('tests/resources/test_renderer.db', 'tests/resources/access_mini_false.log')
+        from log_analyzer.models.factories.factory_per_report import Factory_per_report
+        self.factories = {'per_report': Factory_per_report()}
 
     def test_per_report(self):
-        with Renderer('tests/resources/test_renderer.db') as ren:
-            rep = ren.per_report('2020-10-27 14:45:42', '2020-10-27 14:45:43')
+        db = 'tests/resources/test_renderer.db'
+        rep = self.factories['per_report'].produce(db).render('2020-10-27 14:45:42', '2020-10-27 14:45:43')
         true_list = [0.216, 0.216, 0.216, 0.216]
         self.assertTrue(rep[1][1:] == true_list)

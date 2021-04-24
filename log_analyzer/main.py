@@ -12,7 +12,7 @@ def parse_args(args):
     parser.add_argument('-first_time', '-f_t', '--f_time', type=str)
     parser.add_argument('-second_time', '-s_t', '--s_time', type=str)
     parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
-    parser.add_argument('-rep', '-r', '--rep', type=str)
+    parser.add_argument('-rep', '-r', '--rep', type=str, required=True)
     parser.add_argument('-report_only', '--rep_only', action='store_true')
     return parser.parse_args(args)
 
@@ -27,7 +27,7 @@ def parse_log_file(db_name, file_name):
         dm.migrate(db_name)
         with open(file_name, "r") as myfile:
             for line in myfile:
-                row = render.json_still_valid(line)
+                row = Renderer.json_still_valid(line)
                 if not row:
                     dm.false_insert_val(line)
                     continue

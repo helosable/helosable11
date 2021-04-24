@@ -39,25 +39,16 @@ class main_test(unittest.TestCase):
             self.assertTrue(len(list(notes)) == 2)
 
     def test_json_read(self):
-        import sys
-        import os
-        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
         settings = main.json_read()
         self.assertTrue(settings['db'] == 'main.db')
 
     def test_good_args(self):
-        import sys
-        import os
-        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
         args = main.parse_args(['--rep', 'ip_report'])
         self.assertTrue(args.rep == 'ip_report')
 
     def test_bad_args(self):
-        import sys
-        import os
-        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../log_analyzer")
         from log_analyzer import main
         try:
             main.parse_args([])

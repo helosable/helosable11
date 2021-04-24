@@ -1,7 +1,8 @@
 import sys
 import os
 sys.path.append(os.getcwd())
-from log_analyzer.models.parser_data_manager import Parser_data_manager 
+from log_analyzer.models.parser_data_manager import Parser_data_manager
+
 
 class Ip_report(Parser_data_manager):
 
