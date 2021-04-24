@@ -1,26 +1,22 @@
-from .parser_data_manager import Parser_data_manager
 import numpy
 import jinja2
 import re
 import ijson
-
+import sys
+import os
+sys.path.append(f'{os.getcwd()}/log_analyzer/models/factories')
+from factory_ip_report import Factory_ip_report
+from factory_per_report import Factory_per_report
 
 class Renderer():
 
-    def func_name_change(self, func):
-        return re.split('[(?|;)]', func)[0]
-
-
-    def main_render(self, report_name, first_time, second_time):
-        self.import_factory()
-        # print(f'self.{report_name}({first_time}, {second_time})')
-        # report = exec(f'self.{report_name}({first_time}, {second_time})')
-        # report = self.ip_report('2020-10-27 14:45:42', '2020-10-27 14:45:43')
+    def main_render(self, report_name, first_time, second_time, db_name):
+        factories = {'ip_report': Factory_ip_report(),
+                    'per_report': Factory_per_report()}     
         first_time = f'{first_time}'
         second_time = f'{second_time}'
-        # report = exec("f'self.ip_report({first_time}, {second_time})'")
-        report = Factory_ip_report().reduce.render(first_time, second_time)
-        print(report)
+        report = factories[report_name].produce(db_name).render(first_time, second_time)
+        # print(report)
         file_name = str(report_name)
         headings = report[0]
         data = report[1:]
@@ -50,14 +46,11 @@ class Renderer():
                     current_percentile = float('{:.5f}'.format(current_percentile))
                 current_percentile_list.append(current_percentile)
             report_list.append(current_percentile_list)
-        return report_list
+        return report_list    
 
-    def import_factory(self):
-        import sys
-        import os
-        sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "\\factories")
-        # print (sys.path)
-        from factory_ip_report import Factory_ip_report      
+    @staticmethod
+    def func_name_change(func):
+        return re.split('[(?|;)]', func)[0]
 
     @staticmethod
     def json_still_valid(js):

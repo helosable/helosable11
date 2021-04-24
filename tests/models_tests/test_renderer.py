@@ -21,11 +21,6 @@ class main(unittest.TestCase):
         from log_analyzer import main
         main.parse_log_file('tests/resources/test_renderer.db', 'tests/resources/access_mini_false.log')
 
-    def test_func_name(self):
-        word = 'func?'
-        with Renderer('tests/resources/test_renderer.db') as ren:
-            self.assertTrue(len(ren.func_name_change(word)) == 4)
-
     def test_per_report(self):
         with Renderer('tests/resources/test_renderer.db') as ren:
             rep = ren.per_report('2020-10-27 14:45:42', '2020-10-27 14:45:43')

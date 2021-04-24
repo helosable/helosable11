@@ -6,6 +6,7 @@ import hashlib
 import collections
 from yoyo import read_migrations, get_backend
 import ijson
+import re
 
 
 class Parser_data_manager:
@@ -119,7 +120,7 @@ class Parser_data_manager:
 
     def val_return_for_per_report(self, first_time, second_time, is_time_need=False, func=None):
         if is_time_need:
-            self._cur.execute('SELECT request_time FROM my_table WHERE request in (?)', (tuple(func)))
+            self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}"')
             return self._cur.fetchall()
         self._cur.execute("""SELECT request, status FROM my_table request
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
@@ -129,6 +130,9 @@ class Parser_data_manager:
         self._cur.execute("""SELECT time, request, remote_addr, status FROM my_table
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()
+    
+    def func_name_change(self, func):
+        return re.split('[(?|;)]', func)[0]
 
     @staticmethod
     def hash_val(val):

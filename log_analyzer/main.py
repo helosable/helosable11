@@ -41,10 +41,11 @@ if __name__ == "__main__":
         if os.path.exists(args.log_file):
             render = Renderer()
             if args.rep_only:
-                render.main_render(args.rep, args.f_time, args.s_time)
+                render.main_render(args.rep, args.f_time, args.s_time, settings['db'])
+                print(0)
                 sys.exit()
             parse_log_file(settings['db'], args.log_file)
-            render.main_render(args.rep, args.f_time, args.s_time)
+            render.main_render(args.rep, args.f_time, args.s_time, settings['db'])
         else:
             print('1, file for parsing was not found')
             sys.exit
