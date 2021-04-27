@@ -4,8 +4,6 @@
 import sqlite3
 import hashlib
 import collections
-from yoyo import read_migrations, get_backend
-import re
 
 
 class Parser_data_manager:
@@ -27,12 +25,6 @@ class Parser_data_manager:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
-
-    def migrate(self, db_name):
-        backend = get_backend(f"sqlite:///{db_name}")
-        migration = read_migrations("./migrations")
-        with backend.lock():
-            backend.apply_migrations(backend.to_apply(migration))
 
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
@@ -111,7 +103,7 @@ class Parser_data_manager:
             obj['proxy_host'],
             hashed1,
             obj['file_name']))
-        self.count = (self.count + 1) % 250000
+        self.count = (self.count + 1) % 25000
         if self.count == 0:
             self._cnx.commit()
 
@@ -127,9 +119,6 @@ class Parser_data_manager:
         self._cur.execute("""SELECT time, request, remote_addr, status FROM my_table
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()
-
-    def func_name_change(self, func):
-        return re.split('[(?|;)]', func)[0]
 
     @staticmethod
     def hash_val(val):

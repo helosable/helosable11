@@ -90,10 +90,6 @@ class main(unittest.TestCase):
                 row = cur.execute("SELECT * FROM my_table")
                 self.assertTrue(len(list(row)) == 2)
 
-    def test_func_name(self):
-        word = 'func?'
-        with pdm('tests/resources/test_renderer.db') as dm:
-            self.assertTrue(len(dm.func_name_change(word)) == 4)
 
 if __name__ == "__main__":
     unittest.main()
