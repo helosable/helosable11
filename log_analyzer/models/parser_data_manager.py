@@ -107,7 +107,7 @@ class Parser_data_manager:
         if self.count == 0:
             self._cnx.commit()
 
-    def val_return_for_per_report(self, first_time, second_time, is_time_need=False, func=None):
+    def per_report(self, first_time, second_time, is_time_need=False, func=None):
         if is_time_need:
             self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}"')
             return self._cur.fetchall()
@@ -115,7 +115,7 @@ class Parser_data_manager:
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()
 
-    def val_return_for_ip_report(self, first_time, second_time):
+    def ip_report(self, first_time, second_time):
         self._cur.execute("""SELECT time, request, remote_addr, status FROM my_table
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()

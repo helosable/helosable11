@@ -5,7 +5,6 @@ from yoyo import read_migrations, get_backend
 import argparse
 import sys
 import os
-import sqlite3
 
 
 def parse_args(args):
@@ -58,19 +57,19 @@ if __name__ == "__main__":
             if args.rep_only:
                 render_result = render.main_render(args.rep, args.f_time, args.s_time, settings['db'])
                 if render_result == 1:
-                    print(1)
+                    print('1, bad args')
                     sys.exit(1)
                 print(0)
                 sys.exit()
             parse_log_file(settings['db'], args.log_file)
             render_result = render.main_render(args.rep, args.f_time, args.s_time, settings['db'])
             if render_result == 1:
-                print(1)
+                print('1, bad args')
                 sys.exit(1)
         else:
             print('1, file for parsing was not found')
             sys.exit(1)
-    except (argparse.ArgumentTypeError, sqlite3.OperationalError, TypeError, FileNotFoundError) as error:
+    except (argparse.ArgumentTypeError, TypeError, FileNotFoundError) as error:
         print(1, error)
         sys.exit(1)
     print(0)

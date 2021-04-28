@@ -11,7 +11,7 @@ class Per_report():
     def render(self, first_time, second_time):
         percentile_list = [50, 75, 95, 99]
         report_list = [['func_name', '50 per', '90 per', '95 per', '99 per']]
-        func_name_list = self.dm.val_return_for_per_report(first_time, second_time)
+        func_name_list = self.dm.per_report(first_time, second_time)
         for current_row in func_name_list:
             if current_row[1] == '404':
                 continue
