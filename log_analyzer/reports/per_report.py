@@ -17,7 +17,7 @@ class Per_report():
                 continue
             if current_row == 'error':
                 continue
-            time = self.dm.val_return_for_per_report(None, None, True, current_row[0])
+            time = self.dm.per_report(None, None, True, current_row[0])
             current_time_list = []
             current_percentile_list = []
             current_percentile_list.append(re.split('[(?|;)]', current_row[0])[0])
