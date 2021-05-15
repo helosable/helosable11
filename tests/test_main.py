@@ -55,3 +55,7 @@ class main_test(unittest.TestCase):
         except SystemExit:
             test_res = False
         self.assertTrue(test_res is False)
+
+    def test_bad_time(self):
+        from log_analyzer import main
+        self.assertTrue(main.time_check('2020-10-27 14:45:42', '2020-14-27 14:45:42') is False)
