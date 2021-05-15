@@ -30,5 +30,5 @@ class main(unittest.TestCase):
 
     def test_bad_args_for_report(self):
         from log_analyzer.models.renderer import Renderer
-        ren = Renderer()
-        self.assertTrue(ren.main_render('bad_report', 1, 2, 3) == 1)
+        ren = Renderer('bad_report')
+        self.assertTrue(ren.report_choise() == 1)

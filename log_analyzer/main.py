@@ -5,6 +5,7 @@ from yoyo import read_migrations, get_backend
 import argparse
 import sys
 import os
+import re
 
 
 def parse_args(args):
@@ -53,16 +54,21 @@ if __name__ == "__main__":
     try:
         args = parse_args(sys.argv[1:])
         if os.path.exists(args.log_file):
-            render = Renderer()
+            render = Renderer(args.rep)
+            good_date = r'20[0-9][0-9]-(1[0-2]|0[1-9])-([0-2][0-9]|3[0-1])\s[0-2][0-59]:[0-5][0-9]:[0-5][0-9]'
+            if not bool(re.
+                        match(good_date, args.f_time)) or not bool(re.match(good_date, args.s_time)):
+                print('bad date or time')
+                sys.exit(1)
             if args.rep_only:
-                render_result = render.main_render(args.rep, args.f_time, args.s_time, settings['db'])
+                render_result = render.main_render(args.f_time, args.s_time, settings['db'])
                 if render_result == 1:
                     print('1, bad args')
                     sys.exit(1)
                 print(0)
                 sys.exit()
             parse_log_file(settings['db'], args.log_file)
-            render_result = render.main_render(args.rep, args.f_time, args.s_time, settings['db'])
+            render_result = render.main_render(args.f_time, args.s_time, settings['db'])
             if render_result == 1:
                 print('1, bad args')
                 sys.exit(1)

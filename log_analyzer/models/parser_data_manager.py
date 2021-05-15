@@ -28,7 +28,7 @@ class Parser_data_manager:
 
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
-        hashed1 = self.hash_val(false_obj)
+        hashed_val = hashlib.md5(str(false_obj).encode("utf-8")).hexdigest()
         obj = {"time": "error",
                "remote_addr": "error",
                "remote_user": "error",
@@ -67,7 +67,7 @@ class Parser_data_manager:
                 obj['http_referrer'],
                 obj['http_user_agent'],
                 obj['proxy_host'],
-                hashed1,
+                hashed_val,
                 obj['file_name']))
         self._error_count += 1
 
@@ -75,7 +75,7 @@ class Parser_data_manager:
         obj = collections.OrderedDict(sorted(obj.items()))
         obj['file_name'] = file_name
         obj['time'] = obj['time'][:10] + ' ' + obj['time'][11:19]
-        hashed1 = self.hash_val(obj)
+        hashed_val = hashlib.md5(str(obj).encode("utf-8")).hexdigest()
         self._cur.execute("""INSERT OR IGNORE INTO my_table (
             time,
             remote_addr,
@@ -101,7 +101,7 @@ class Parser_data_manager:
             obj['http_referrer'],
             obj['http_user_agent'],
             obj['proxy_host'],
-            hashed1,
+            hashed_val,
             obj['file_name']))
         self.count = (self.count + 1) % 25000
         if self.count == 0:
@@ -119,7 +119,3 @@ class Parser_data_manager:
         self._cur.execute("""SELECT time, request, remote_addr, status FROM my_table
         WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
         return self._cur.fetchall()
-
-    @staticmethod
-    def hash_val(val):
-        return hashlib.md5(str(val).encode("utf-8")).hexdigest()
