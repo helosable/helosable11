@@ -7,9 +7,10 @@ import collections
 
 
 class Parser_data_manager:
+    db_prefix = "sqlite:///"
     def __init__(self, connection_string):
-        self.db_name = connection_string
-        self._cnx = sqlite3.connect(connection_string)
+        self.db_name = connection_string[connection_string.startswith(Parser_data_manager.db_prefix) and len(Parser_data_manager.db_prefix):]
+        self._cnx = sqlite3.connect(self.db_name)
         self._cur = self._cnx.cursor()
         self.count = 0
         self._error_count = 1
@@ -107,15 +108,18 @@ class Parser_data_manager:
         if self.count == 0:
             self._cnx.commit()
 
-    def per_report(self, first_time, second_time, is_time_need=False, func=None):
-        if is_time_need:
-            self._cur.execute(f'SELECT request_time FROM my_table WHERE request = "{func}"')
-            return self._cur.fetchall()
-        self._cur.execute("""SELECT request, status FROM my_table request
-        WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
+    def fetch_request_time_by_fname(self, func=None):
+        self._cur.execute(f'SELECT request_time FROM my_table WHERE (request LIKE "{func}%" or {func or "null"} is null) GROUP BY request')
         return self._cur.fetchall()
 
-    def ip_report(self, first_time, second_time):
+    def fetch_request_time_status_by_time(self, first_time, second_time):
+        self._cur.execute("""SELECT request, status FROM my_table request
+        WHERE (time >= :fromDateTime OR :fromDateTime is null) AND (time <= :toDateTime OR :toDateTime is null) 
+        GROUP BY request""", {'fromDateTime': first_time, 'toDateTime': second_time})
+        return self._cur.fetchall()
+
+    def fetch_requests(self, first_time, second_time):
         self._cur.execute("""SELECT time, request, remote_addr, status FROM my_table
-        WHERE time BETWEEN ? AND ? GROUP BY request""", (first_time, second_time))
+        WHERE (time >= :fromDateTime OR :fromDateTime is null) AND (time <= :toDateTime OR :toDateTime is null)
+        GROUP BY request""", {'fromDateTime': first_time, 'toDateTime': second_time})
         return self._cur.fetchall()

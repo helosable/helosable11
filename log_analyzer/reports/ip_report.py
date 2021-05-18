@@ -9,7 +9,7 @@ class Ip_report():
 
     def render(self, first_time, second_time):
         report_list = [['time', 'func', 'ip']]
-        values = self.dm.ip_report(first_time, second_time)
+        values = self.dm.fetch_requests(first_time, second_time)
         for current_row in values:
             if current_row[3] == '404':
                 continue
