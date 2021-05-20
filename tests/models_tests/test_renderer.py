@@ -29,6 +29,10 @@ class main(unittest.TestCase):
         self.assertTrue(rep[1][1:] == true_list)
 
     def test_bad_args_for_report(self):
-        from log_analyzer.models.renderer import Renderer
-        ren = Renderer('bad_report')
-        self.assertTrue(ren.report_choise() == 1)
+        from log_analyzer.services.renderer import Renderer
+        ren = Renderer('sqlite:///tests/resources/test_renderer.db')
+        try:
+            ren._report_choise('bad_report')
+        except Exception:
+            error = 1
+        self.assertTrue(error == 1)

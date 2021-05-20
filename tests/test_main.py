@@ -45,7 +45,8 @@ class main_test(unittest.TestCase):
 
     def test_good_args(self):
         from log_analyzer import main
-        args = main.parse_args(['--rep', 'ip_report'])
+        args = main.parse_args(['-rep', 'ip_report', '-first_time', '2020-10-27 14:45:42',
+                                '-second_time', '2020-10-28 23:55:46', '-f', 'false.log'])
         self.assertTrue(args.rep == 'ip_report')
 
     def test_bad_args(self):
@@ -58,4 +59,8 @@ class main_test(unittest.TestCase):
 
     def test_bad_time(self):
         from log_analyzer import main
-        self.assertTrue(main.time_check('2020-10-27 14:45:42', '2020-14-27 14:45:42') is False)
+        try:
+            self.assertTrue(main.time_check('2020-10-27 14:45:42', '2020-14-27 14:45:42') is False)
+        except Exception:
+            test_res = False
+        self.assertTrue(test_res is False)

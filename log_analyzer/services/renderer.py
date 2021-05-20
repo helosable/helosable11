@@ -4,22 +4,23 @@ from reports.factories.factory_per_report import Factory_per_report
 
 
 class Renderer():
-    def __init__(self, report_name):
-        self.report_name = report_name
+    def __init__(self, db_name):
+        self.db_name = db_name
 
-    def report_choise(self):
+    def _report_choise(self, report_name):
         report_list = ['ip_report', 'per_report']
-        if self.report_name not in report_list:
-            return 1
+        if report_name not in report_list:
+            raise Exception("Unknown report")
+
         factories = {'ip_report': Factory_ip_report(),
                      'per_report': Factory_per_report()}
-        return factories[self.report_name]
+        return factories[report_name]
 
-    def main_render(self, first_time, second_time, db_name):
-        report = self.report_choise().produce(db_name).render(str(first_time), str(second_time))
-        file_name = str(self.report_name)
+    def process(self, first_time, second_time, report_name):
+        report = self._report_choise(report_name).produce(self.db_name).render(
+            str(first_time), str(second_time))
         headings = report[0]
         data = report[1:]
-        with open(f'./jinja/templates/{file_name}.html', 'w') as myfile:
+        with open(f'./jinja/templates/{str(report_name)}.html', 'w') as myfile:
             myfile.write(jinja2.Environment(loader=jinja2.FileSystemLoader('./jinja/templates'))
                          .get_template('base.html').render(heading=headings, data=data))
