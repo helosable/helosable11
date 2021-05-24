@@ -109,7 +109,7 @@ class Parser_data_manager:
             self._cnx.commit()
 
     def fetch_request_time_by_fname(self, func=None):
-        self._cur.execute(f'SELECT request_time FROM my_table WHERE (request LIKE "{func}%" or {func or "null"} is null) GROUP BY request')
+        self._cur.execute(f'SELECT request_time FROM my_table WHERE (request LIKE "{func or ""}" or {not func and "null"} is null) GROUP BY request')
         return self._cur.fetchall()
 
     def fetch_request_time_status_by_time(self, first_time, second_time):
