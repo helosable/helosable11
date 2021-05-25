@@ -49,14 +49,6 @@ class main_test(unittest.TestCase):
                                 '-second_time', '2020-10-28 23:55:46', '-f', 'false.log'])
         self.assertTrue(args.rep == 'ip_report')
 
-    def test_bad_args(self):
-        from log_analyzer import main
-        try:
-            main.parse_args([])
-        except SystemExit:
-            test_res = False
-        self.assertTrue(test_res is False)
-
     def test_bad_time(self):
         from log_analyzer import main
         try:

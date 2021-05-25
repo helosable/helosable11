@@ -14,10 +14,10 @@ def datetime_validate(datetime_str):
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-first_time', '-f_t', '--f_time', type=str, required=True)
-    parser.add_argument('-second_time', '-s_t', '--s_time', type=str, required=True)
-    parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log', required=True)
-    parser.add_argument('-rep', '-r', '--rep', type=str, required=True)
+    parser.add_argument('-first_time', '-f_t', '--f_time', type=str)
+    parser.add_argument('-second_time', '-s_t', '--s_time', type=str)
+    parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
+    parser.add_argument('-rep', '-r', '--rep', type=str)
 
     parsed_args = parser.parse_args(args)
     if parsed_args.rep:
@@ -28,7 +28,7 @@ def parse_args(args):
 
 
 def migrate(db_name):
-    backend = get_backend(f"sqlite:///{db_name}")
+    backend = get_backend(f"{db_name}")
     migration = read_migrations("./migrations")
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migration))
