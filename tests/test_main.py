@@ -56,3 +56,8 @@ class main_test(unittest.TestCase):
         except Exception:
             test_res = False
         self.assertTrue(test_res is False)
+
+    def test_bad_config(self):
+        from log_analyzer import main
+        bad_config = {"db": ""}
+        self.assertTrue(main.settings_check(bad_config) is False)

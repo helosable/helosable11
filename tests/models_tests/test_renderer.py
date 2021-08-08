@@ -30,9 +30,9 @@ class main(unittest.TestCase):
 
     def test_bad_args_for_report(self):
         from log_analyzer.services.renderer import Renderer
-        ren = Renderer('sqlite:///tests/resources/test_renderer.db')
+        ren = Renderer('sqlite:///tests/resources/test_renderer.db', 'bad_report')
         try:
-            ren._report_choise('bad_report')
+            ren._report_choise()
         except Exception:
             error = 1
         self.assertTrue(error == 1)

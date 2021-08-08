@@ -118,7 +118,7 @@ class Parser_data_manager:
         return self._cur.fetchall()
 
     def fetch_request_time_status_by_time(self, first_time, second_time):
-        self._cur.execute("""SELECT request, status FROM my_table request
+        self._cur.execute("""SELECT request, status, remote_addr FROM my_table request
         WHERE (time >= :fromDateTime OR :fromDateTime is null) AND
         (time <= :toDateTime OR :toDateTime is null)
         GROUP BY request""", {'fromDateTime': first_time, 'toDateTime': second_time})

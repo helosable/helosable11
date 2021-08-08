@@ -28,7 +28,7 @@ def parse_args(args):
 
 
 def migrate(db_name):
-    backend = get_backend(f"{db_name}")
+    backend = get_backend(f"sqlite:///{db_name}")
     migration = read_migrations("./migrations")
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migration))
@@ -39,6 +39,12 @@ def json_still_valid(js):
         return next(ijson.items(js, "", multiple_values=True))
     except ijson.common.IncompleteJSONError:
         return False
+
+
+def settings_check(js):
+    if len(js["db"]) == 0:
+        return False
+    return True
 
 
 def json_read():
@@ -59,6 +65,9 @@ def parse_log_file(db_name, file_name):
 
 if __name__ == "__main__":
     settings = json_read()
+    if settings_check(settings) is False:
+        print("bad config")
+        sys.exit(1)
     migrate(settings['db'])
     try:
         args = parse_args(sys.argv[1:])
@@ -70,8 +79,8 @@ if __name__ == "__main__":
             parse_log_file(settings['db'], args.log_file)
 
         if args.rep:
-            render = Renderer(settings['db'])
-            render.process(args.f_time, args.s_time, args.rep)
+            render = Renderer(settings['db'], args.rep)
+            render.process(args.f_time, args.s_time, settings['api_token'])
 
     except Exception as error:
         print(error)
