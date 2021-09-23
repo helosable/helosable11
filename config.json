@@ -1,4 +1,4 @@
 {
-    "db" : "main.db",
-    "api_token" : ""
+    "db" : "sqlite:///main.db",
+    "api_token" : "123"
 }

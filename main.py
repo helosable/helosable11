@@ -1,11 +1,11 @@
-from models.parser_data_manager import Parser_data_manager
-from services.renderer import Renderer
+import os
+import sys
+import ijson
+import argparse
 from yoyo import read_migrations, get_backend
 from datetime import datetime
-import argparse
-import ijson
-import sys
-import os
+from log_analyzer.models.parser_data_manager import Parser_data_manager
+from log_analyzer.services.renderer import Renderer
 
 
 def datetime_validate(datetime_str):
@@ -28,7 +28,7 @@ def parse_args(args):
 
 
 def migrate(db_name):
-    backend = get_backend(f"sqlite:///{db_name}")
+    backend = get_backend(db_name)
     migration = read_migrations("./migrations")
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migration))
@@ -43,6 +43,7 @@ def json_still_valid(js):
 
 def settings_check(js):
     if len(js["db"]) == 0:
+        print("DB connection string is empty")
         return False
     return True
 
@@ -62,12 +63,13 @@ def parse_log_file(db_name, file_name):
                 else:
                     dm.insert_val(row, file_name)
 
-
 if __name__ == "__main__":
     settings = json_read()
+
     if settings_check(settings) is False:
-        print("bad config")
+        print("Bad config")
         sys.exit(1)
+
     migrate(settings['db'])
     try:
         args = parse_args(sys.argv[1:])
@@ -79,8 +81,9 @@ if __name__ == "__main__":
             parse_log_file(settings['db'], args.log_file)
 
         if args.rep:
-            render = Renderer(settings['db'], args.rep)
-            render.process(args.f_time, args.s_time, settings['api_token'])
+            with Parser_data_manager(settings['db']) as dm:
+                render = Renderer(dm, args.rep)
+                render.process(args.f_time, args.s_time, settings)
 
     except Exception as error:
         print(error)
