@@ -1,6 +1,6 @@
 import re
 import numpy
-# from services.country_getter import country_name_from_ip
+from log_analyzer.services.country_getter import country_name_from_ip
 
 
 class Per_report():
@@ -19,9 +19,9 @@ class Per_report():
 
             if current_row == 'error':
                 continue
+            location = country_name_from_ip(func_name_list[0][-1])
 
-            # location = country_name_from_ip(current_row[2])
-            location = ["", ""]
+
             time = self.dm.fetch_request_time_by_fname(current_row[0])
 
             current_time_list = []
