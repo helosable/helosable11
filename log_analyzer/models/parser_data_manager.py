@@ -7,19 +7,19 @@ import collections
 
 
 class Parser_data_manager:
+    db_prefix = "sqlite:///"
+
     def __init__(self, connection_string):
-        try:
-            self._cnx = sqlite3.connect(connection_string)
-            self._cur = self._cnx.cursor()
-            self._count = 0
-            self._error_count = 1
-        except sqlite3.Error:
-            print("Error connecting to database!")
+        self.db_name = connection_string[
+            connection_string.
+            startswith(Parser_data_manager.db_prefix) and len(Parser_data_manager.db_prefix):]
+        self._cnx = sqlite3.connect(self.db_name)
+        self.count = 0
+        self._error_count = 1
 
     def close(self):
         if self._cnx:
             self._cnx.commit()
-            self._cur.close()
             self._cnx.close()
 
     def __enter__(self):
@@ -30,7 +30,6 @@ class Parser_data_manager:
 
     def false_insert_val(self, false_obj):
         false_obj = str(false_obj) + str(self._error_count)
-        hashed1 = self.hash_val(false_obj)
         obj = {"time": "error",
                "remote_addr": "error",
                "remote_user": "error",
@@ -41,7 +40,10 @@ class Parser_data_manager:
                "request_method": "error",
                "http_referrer": "error",
                "http_user_agent": "error",
-               "proxy_host": "error"}
+               "proxy_host": "error",
+               "file_name": "error",
+               "row_hash": hashlib.md5(str(false_obj).encode("utf-8")).hexdigest()}
+
         with self._cnx as con:
             con.execute("""INSERT OR IGNORE INTO my_table (
                     time,
@@ -55,25 +57,31 @@ class Parser_data_manager:
                     http_referrer,
                     http_user_agent,
                     proxy_host,
-                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
-                obj['time'],
-                obj['remote_addr'],
-                obj['remote_user'],
-                obj['body_bytes_sent'],
-                obj['request_time'],
-                obj['status'],
-                obj['request'],
-                obj['request_method'],
-                obj['http_referrer'],
-                obj['http_user_agent'],
-                obj['proxy_host'],
-                hashed1))
+                    row_hash,
+                    file_name)
+                VALUES (
+                    :time,
+                    :remote_addr,
+                    :remote_user,
+                    :body_bytes_sent,
+                    :request_time,
+                    :status,
+                    :request,
+                    :request_method,
+                    :http_referrer,
+                    :http_user_agent,
+                    :proxy_host,
+                    :row_hash,
+                    :file_name)""", (obj))
+
         self._error_count += 1
 
-    def insert_val(self, obj):
+    def insert_val(self, obj, file_name):
         obj = collections.OrderedDict(sorted(obj.items()))
-        hashed1 = self.hash_val(obj)
-        self._cur.execute("""INSERT OR IGNORE INTO my_table (
+        obj['file_name'] = file_name
+        obj['time'] = obj['time'][:10] + ' ' + obj['time'][11:19]
+        obj['row_hash'] = hashlib.md5(str(obj).encode("utf-8")).hexdigest()
+        self._cnx.execute("""INSERT OR IGNORE INTO my_table (
                 time,
                 remote_addr,
                 remote_user,
@@ -85,23 +93,46 @@ class Parser_data_manager:
                 http_referrer,
                 http_user_agent,
                 proxy_host,
-                row_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", 
-            (obj['time'],
-            obj['remote_addr'],
-            obj['remote_user'],
-            obj['body_bytes_sent'],
-            obj['request_time'],
-            obj['status'],
-            obj['request'],
-            obj['request_method'],
-            obj['http_referrer'],
-            obj['http_user_agent'],
-            obj['proxy_host'],
-            hashed1))
-        self._count = (self._count + 1) % 10000
-        if self._count == 0:
+                row_hash,
+                file_name)
+            VALUES (
+                :time,
+                :remote_addr,
+                :remote_user,
+                :body_bytes_sent,
+                :request_time,
+                :status,
+                :request,
+                :request_method,
+                :http_referrer,
+                :http_user_agent,
+                :proxy_host,
+                :row_hash,
+                :file_name)""", (obj))
+
+        self.count = (self.count + 1) % 25000
+        if self.count == 0:
             self._cnx.commit()
 
-    @staticmethod
-    def hash_val(val):
-        return hashlib.md5(str(val).encode("utf-8")).hexdigest()
+    def fetch_request_time_by_fname(self, func=None):
+        cur = self._cnx.cursor()
+        cur.execute(
+            'SELECT request_time FROM my_table WHERE request LIKE '
+            f'"{func or ""}" or {not func and "null"} is null GROUP BY request')
+        return cur.fetchall()
+
+    def fetch_request_time_status_by_time(self, first_time, second_time):
+        cur = self._cnx.cursor()
+        cur.execute("""SELECT request, status, remote_addr FROM my_table request
+        WHERE (DATE(time) >= DATE(:fromDateTime) OR :fromDateTime is null) AND
+        (DATE(time) <= DATE(:toDateTime) OR :toDateTime is null)
+        GROUP BY request""", {'fromDateTime': first_time, 'toDateTime': second_time})
+        return cur.fetchall()
+
+    def fetch_requests(self, first_time, second_time):
+        cur = self._cnx.cursor()
+        cur.execute("""SELECT time, request, remote_addr, status FROM my_table
+        WHERE (DATE(time) >= DATE(:fromDateTime) OR :fromDateTime is null) AND
+        (DATE(time) <= DATE(:toDateTime) OR :toDateTime is null)
+        GROUP BY request""", {'fromDateTime': first_time, 'toDateTime': second_time})
+        return cur.fetchall()
