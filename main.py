@@ -2,7 +2,6 @@ import os
 import sys
 import ijson
 import argparse
-from yoyo import read_migrations, get_backend
 from datetime import datetime
 from log_analyzer.models.parser_data_manager import Parser_data_manager
 from log_analyzer.services.renderer import Renderer
@@ -16,7 +15,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('-first_time', '-f_t', '--f_time', type=str)
     parser.add_argument('-second_time', '-s_t', '--s_time', type=str)
-    parser.add_argument('-file', '-f', '--log_file', type=str, default='access.log')
+    parser.add_argument('-file', '-f', '--log_file', type=str, default='acces_mini.log')
     parser.add_argument('-rep', '-r', '--rep', type=str)
 
     parsed_args = parser.parse_args(args)
@@ -26,14 +25,6 @@ def parse_args(args):
 
     return parsed_args
 
-
-def migrate(db_name):
-    backend = get_backend(db_name)
-    migration = read_migrations("./migrations")
-    with backend.lock():
-        backend.apply_migrations(backend.to_apply(migration))
-
-
 def json_still_valid(js):
     try:
         return next(ijson.items(js, "", multiple_values=True))
@@ -42,35 +33,35 @@ def json_still_valid(js):
 
 
 def settings_check(js):
-    if len(js["db"]) == 0:
+    if len(js["db_name"]) == 0:
         print("DB connection string is empty")
         return False
     return True
 
 
-def json_read():
-    with open('config.json', 'r') as config:
+def json_read(config):
+    with open(config, 'r') as config:
         return next(ijson.items(config, '', multiple_values=True))
 
 
-def parse_log_file(db_name, file_name):
-    with Parser_data_manager(db_name) as dm:
+def parse_log_file(db_adress, table_name, file_name):
+    with Parser_data_manager(db_adress, table_name) as dm:
+        dm.migrate()
         with open(file_name, "r") as myfile:
             for line in myfile:
                 row = json_still_valid(line)
                 if not row:
-                    dm.false_insert_val(line)
-                else:
-                    dm.insert_val(row, file_name)
+                    dm.false_insert_val()
+                if dm.insert_val(row, file_name) == 0:
+                    pass
 
 if __name__ == "__main__":
-    settings = json_read()
+    settings = json_read('config.json')
+    db_query = f"clickhouse://{settings['db_user_name']}:{settings['db_password']}@{settings['db_ip']}:{settings['db_port']}/{settings['db_name']}"
 
     if settings_check(settings) is False:
         print("Bad config")
         sys.exit(1)
-
-    migrate(settings['db'])
     try:
         args = parse_args(sys.argv[1:])
 
@@ -78,10 +69,10 @@ if __name__ == "__main__":
             if not os.path.exists(args.log_file):
                 raise Exception('file for parsing not found')
 
-            parse_log_file(settings['db'], args.log_file)
+            parse_log_file(db_query, settings['table_name'], args.log_file)
 
         if args.rep:
-            with Parser_data_manager(settings['db']) as dm:
+            with Parser_data_manager(db_query, settings['table_name']) as dm:
                 render = Renderer(dm, args.rep)
                 render.process(args.f_time, args.s_time, settings)
 

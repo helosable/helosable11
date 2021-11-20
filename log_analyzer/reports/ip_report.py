@@ -1,5 +1,5 @@
 import re
-# from services.country_getter import country_name_from_ip
+from log_analyzer.services.country_getter import country_name_from_ip
 
 
 class Ip_report():
@@ -19,8 +19,7 @@ class Ip_report():
             if current_row[0] == 'error':
                 continue
 
-            # location = country_name_from_ip(current_row[2])
-            location = ["", ""]
+            location = country_name_from_ip(current_row[2])
 
             report_list.append([current_row[0], re.split('[(?|;)]', current_row[1])[0],
                                 current_row[2], f"{location[0]}, {location[1]}"])

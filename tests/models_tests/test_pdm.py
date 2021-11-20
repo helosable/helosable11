@@ -1,20 +1,24 @@
 import unittest
-import sqlite3
-from yoyo import read_migrations, get_backend
+from clickhouse_driver import connect
 from log_analyzer.models.parser_data_manager import Parser_data_manager as pdm
-
+from main import json_read
 
 class main(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        backend = get_backend("sqlite:///tests/resources/test_pdm.db")
-        migrations = read_migrations("./migrations")
-        with backend.lock():
-            backend.apply_migrations(backend.to_apply(migrations))
+        settings = json_read('test_config.json')
+        db_query = f"clickhouse://{settings['db_user_name']}:{settings['db_password']}@{settings['db_ip']}:{settings['db_port']}/{settings['db_name']}"
+        with pdm(db_query, settings['table_name']) as dm:
+            dm.migrate()
+
 
     def setUp(self):
-        with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
-            cnx.execute("""DELETE FROM my_table""")
+        self.settings = json_read('test_config.json')
+        self.db_query = f"clickhouse://{self.settings['db_user_name']}:{self.settings['db_password']}@{self.settings['db_ip']}:{self.settings['db_port']}/{self.settings['db_name']}"
+        with connect(self.db_query) as cnx:
+            cur = cnx.cursor()
+            cur.execute(f"TRUNCATE TABLE {self.settings['table_name']}")
+        
 
     def test_insert(self):
         obj = {"time": "2020-10-27 14:45:00",
@@ -28,9 +32,9 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test_pdm.db') as dm:
-            dm.insert_val(obj, 'access_mini_false.log')
-        with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
+        with pdm(self.db_query, self.settings['table_name']) as dm:
+            dm.insert_val(obj, 'tests/resources/access_mini.log')
+        with connect(self.db_query) as cnx:
             cur = cnx.cursor()
             cur.execute("""SELECT time,
                         remote_addr,
@@ -42,7 +46,7 @@ class main(unittest.TestCase):
                         request_method,
                         http_referrer,
                         http_user_agent,
-                        proxy_host FROM my_table """)
+                        proxy_host FROM """+f'{self.settings["table_name"]}')
         row = cur.fetchone()
         self.assertTrue(row == tuple(obj.values()))
 
@@ -58,17 +62,17 @@ class main(unittest.TestCase):
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
                "proxy_host": "-"}
-        with pdm('tests/resources/test_pdm.db') as dm:
+        with pdm(self.db_query, self.settings['table_name']) as dm:
             for i in range(2):
-                dm.insert_val(obj, 'access_mini_false.log')
-        with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
+                dm.insert_val(obj, 'tests/resources/access_mini.log')
+        with connect(self.db_query) as cnx:
             cur = cnx.cursor()
-            cur.execute("""SELECT * FROM my_table""")
+            cur.execute(f"SELECT * FROM {self.settings['table_name']}")
             row = cur.fetchall()
             self.assertTrue(len(row) == 1)
 
     def test_double_insert_false(self):
-        obj = {"time": """\2021-10-27 14:45:42""",
+        obj = dict({"time": """\2021-10-27 14:45:42""",
                "remote_addr": "103.42.20.221",
                "remote_user": "03039",
                "body_bytes_sent": "162",
@@ -78,13 +82,14 @@ class main(unittest.TestCase):
                "request_method": "POST",
                "http_referrer": "-",
                "http_user_agent": "SQLAnywhere/16.0.0.2546",
-               "proxy_host": "-"}
-        with pdm('tests/resources/test_pdm.db') as dm:
+               "proxy_host": "-"})
+        with pdm(self.db_query, self.settings['table_name']) as dm:
             for i in range(2):
-                dm.false_insert_val(obj)
-            with sqlite3.connect('tests/resources/test_pdm.db') as cnx:
+                dm.false_insert_val()
+            with connect(self.db_query) as cnx:
                 cur = cnx.cursor()
-                row = cur.execute("SELECT * FROM my_table")
+                cur.execute(f"SELECT * FROM {self.settings['table_name']}")
+                row = cur.fetchall()
                 self.assertTrue(len(list(row)) == 2)
 
 
